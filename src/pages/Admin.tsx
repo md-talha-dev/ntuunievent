@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 const Admin: React.FC = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAdmin } = useAuth();
   const { 
     events, 
     categories,
@@ -44,10 +44,10 @@ const Admin: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'closed'>('all');
 
   useEffect(() => {
-    if (!isLoading && (!user || user.role !== 'admin')) {
+    if (!isLoading && (!user || !isAdmin)) {
       navigate('/login');
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, isAdmin, navigate]);
 
   const stats = useMemo(() => {
     const totalEvents = events.length;
