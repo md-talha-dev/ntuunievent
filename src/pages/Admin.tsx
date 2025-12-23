@@ -6,7 +6,6 @@ import { Event, EventCategory, isEventPast } from '@/lib/data';
 import Header from '@/components/layout/Header';
 import AdminEventCard from '@/components/admin/AdminEventCard';
 import EventForm from '@/components/admin/EventForm';
-import ManagementCard from '@/components/admin/ManagementCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,7 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Plus, 
   Calendar, 
@@ -25,10 +23,6 @@ import {
   Heart, 
   Check, 
   Search, 
-  LayoutGrid,
-  Building2,
-  Users2,
-  Tag,
   Sparkles
 } from 'lucide-react';
 
@@ -37,17 +31,9 @@ const Admin: React.FC = () => {
   const { 
     events, 
     categories,
-    departments,
-    organizers,
     addEvent, 
     updateEvent, 
-    deleteEvent,
-    addCategory,
-    deleteCategory,
-    addDepartment,
-    deleteDepartment,
-    addOrganizer,
-    deleteOrganizer
+    deleteEvent
   } = useEvents();
   const navigate = useNavigate();
 
@@ -131,7 +117,7 @@ const Admin: React.FC = () => {
               </h1>
             </div>
             <p className="text-muted-foreground">
-              Full control over events, categories, departments & societies
+              Manage and monitor all university events
             </p>
           </div>
           <Button 
@@ -152,7 +138,7 @@ const Admin: React.FC = () => {
             { label: 'Active Events', value: stats.activeEvents, icon: Users, gradient: 'bg-gradient-to-r from-success to-success/70', delay: '100ms' },
             { label: 'Total Interested', value: stats.totalInterested, icon: Heart, gradient: 'bg-gradient-to-r from-info to-info/70', delay: '200ms' },
             { label: 'Total Going', value: stats.totalGoing, icon: Check, gradient: 'bg-gradient-to-r from-accent to-accent/70', delay: '300ms' },
-          ].map((stat, index) => (
+          ].map((stat) => (
             <Card 
               key={stat.label}
               className="group animate-slide-up overflow-hidden relative hover:shadow-2xl hover:-translate-y-1 transition-all duration-500" 
@@ -178,135 +164,76 @@ const Admin: React.FC = () => {
           ))}
         </div>
 
-        {/* Tabs for different management sections */}
-        <Tabs defaultValue="events" className="space-y-6">
-          <TabsList className="bg-gradient-to-r from-muted via-muted/80 to-muted p-1.5 rounded-xl shadow-lg border border-border/30">
-            <TabsTrigger 
-              value="events" 
-              className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-lg transition-all duration-300"
-            >
-              <LayoutGrid className="h-4 w-4 mr-2" />
-              Events
-            </TabsTrigger>
-            <TabsTrigger 
-              value="manage" 
-              className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-lg transition-all duration-300"
-            >
-              <Building2 className="h-4 w-4 mr-2" />
-              Manage
-            </TabsTrigger>
-          </TabsList>
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-fade-in">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Input
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as EventCategory | 'all')}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as 'all' | 'active' | 'closed')}>
+            <SelectTrigger className="w-full sm:w-[150px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Events Tab */}
-          <TabsContent value="events" className="space-y-6 animate-fade-in">
-            {/* Filters */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1 group">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input
-                  placeholder="Search events..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+        {/* Events Grid */}
+        {filteredEvents.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
+            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted to-primary/10 flex items-center justify-center mb-4 shadow-xl animate-float">
+              <Calendar className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="font-display text-lg font-semibold text-foreground mb-2">
+              No events found
+            </h3>
+            <p className="text-muted-foreground max-w-sm mb-4">
+              No events match your current filters. Try adjusting your search or create a new event.
+            </p>
+            <Button variant="hero" onClick={handleAddEvent} className="shadow-xl">
+              <Plus className="h-4 w-4" />
+              Create Event
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredEvents.map((event, index) => (
+              <div 
+                key={event.id} 
+                className="animate-slide-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <AdminEventCard
+                  event={event}
+                  onEdit={handleEditEvent}
+                  onDelete={deleteEvent}
                 />
               </div>
-              <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as EventCategory | 'all')}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as 'all' | 'active' | 'closed')}>
-                <SelectTrigger className="w-full sm:w-[150px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Events Grid */}
-            {filteredEvents.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
-                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted to-primary/10 flex items-center justify-center mb-4 shadow-xl animate-float">
-                  <Calendar className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  No events found
-                </h3>
-                <p className="text-muted-foreground max-w-sm mb-4">
-                  No events match your current filters. Try adjusting your search or create a new event.
-                </p>
-                <Button variant="hero" onClick={handleAddEvent} className="shadow-xl">
-                  <Plus className="h-4 w-4" />
-                  Create Event
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEvents.map((event, index) => (
-                  <div 
-                    key={event.id} 
-                    className="animate-slide-up"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <AdminEventCard
-                      event={event}
-                      onEdit={handleEditEvent}
-                      onDelete={deleteEvent}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Management Tab */}
-          <TabsContent value="manage" className="animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ManagementCard
-                title="Categories"
-                description="Event types & categories"
-                items={categories}
-                onAdd={addCategory}
-                onDelete={deleteCategory}
-                icon={<Tag className="h-5 w-5 text-primary-foreground" />}
-                gradient="bg-gradient-primary"
-                placeholder="Enter category name..."
-              />
-              <ManagementCard
-                title="Departments"
-                description="University departments"
-                items={departments}
-                onAdd={addDepartment}
-                onDelete={deleteDepartment}
-                icon={<Building2 className="h-5 w-5 text-primary-foreground" />}
-                gradient="bg-gradient-to-r from-info to-info/70"
-                placeholder="Enter department name..."
-              />
-              <ManagementCard
-                title="Societies"
-                description="Clubs & student societies"
-                items={organizers}
-                onAdd={addOrganizer}
-                onDelete={deleteOrganizer}
-                icon={<Users2 className="h-5 w-5 text-primary-foreground" />}
-                gradient="bg-gradient-to-r from-success to-success/70"
-                placeholder="Enter society name..."
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
+            ))}
+          </div>
+        )}
 
         <EventForm
           event={editingEvent}
