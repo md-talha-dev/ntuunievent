@@ -68,14 +68,14 @@ const EventFilters: React.FC<EventFiltersProps> = ({
               "transition-all duration-300"
             )}
           >
-            <X className="h-4 w-4 mr-1" />
+            <X className="h-4 w-4 mr-1 icon-3d-sm" />
             Clear all
           </Button>
         )}
       </div>
 
       <div className="relative group">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors duration-300" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 icon-3d-sm transition-colors duration-300" />
         <Input
           placeholder="Search events..."
           value={searchQuery}
@@ -122,7 +122,7 @@ const EventFilters: React.FC<EventFiltersProps> = ({
           )}
         >
           <Sparkles className={cn(
-            "h-4 w-4 mr-2 transition-transform duration-300",
+            "h-4 w-4 mr-2 icon-3d-sm transition-transform duration-300",
             showPastEvents && "animate-pulse"
           )} />
           {showPastEvents ? 'Showing Past' : 'Show Past Events'}

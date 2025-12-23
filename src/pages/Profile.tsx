@@ -83,7 +83,7 @@ const Profile: React.FC = () => {
           </h1>
           
           <div className="flex items-center gap-2 text-muted-foreground mb-3">
-            <Mail className="h-4 w-4" />
+            <Mail className="h-4 w-4 icon-3d-sm" />
             <span className="text-sm">{displayEmail}</span>
           </div>
           
@@ -127,11 +127,11 @@ const Profile: React.FC = () => {
         <Tabs defaultValue="interested" className="animate-fade-in">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6">
             <TabsTrigger value="interested" className="gap-2">
-              <Heart className="h-4 w-4" />
+              <Heart className="h-4 w-4 icon-3d-sm" />
               Interested ({interestedEvents.length})
             </TabsTrigger>
             <TabsTrigger value="going" className="gap-2">
-              <CalendarCheck className="h-4 w-4" />
+              <CalendarCheck className="h-4 w-4 icon-3d-sm" />
               Going ({goingEvents.length})
             </TabsTrigger>
           </TabsList>
@@ -140,7 +140,7 @@ const Profile: React.FC = () => {
             {interestedEvents.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted to-info/10 flex items-center justify-center mb-4 shadow-xl animate-float">
-                  <Heart className="h-10 w-10 text-muted-foreground" />
+                  <Heart className="h-10 w-10 icon-3d-lg" />
                 </div>
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
                   No interested events yet
@@ -168,7 +168,7 @@ const Profile: React.FC = () => {
             {goingEvents.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted to-success/10 flex items-center justify-center mb-4 shadow-xl animate-float">
-                  <CalendarCheck className="h-10 w-10 text-muted-foreground" />
+                  <CalendarCheck className="h-10 w-10 icon-3d-lg" />
                 </div>
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
                   No events you're attending
