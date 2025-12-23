@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Event, EventCategory } from '@/lib/data';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './AuthContext';
 
 interface EventContextType {
   events: Event[];
@@ -9,11 +10,11 @@ interface EventContextType {
   departments: string[];
   organizers: string[];
   loading: boolean;
-  addEvent: (event: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'interestedUsers' | 'goingUsers' | 'createdAt'>) => Promise<void>;
+  addEvent: (event: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'createdAt' | 'userInterested' | 'userGoing'>) => Promise<void>;
   updateEvent: (id: string, event: Partial<Event>) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
-  toggleInterested: (eventId: string, userId: string) => Promise<void>;
-  toggleGoing: (eventId: string, userId: string) => Promise<void>;
+  toggleInterested: (eventId: string) => Promise<void>;
+  toggleGoing: (eventId: string) => Promise<void>;
   getEventById: (id: string) => Event | undefined;
   addCategory: (category: string) => Promise<void>;
   deleteCategory: (category: string) => Promise<void>;
@@ -32,6 +33,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [departments, setDepartments] = useState<string[]>([]);
   const [organizers, setOrganizers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   // Fetch all data from database
   const fetchData = async () => {
@@ -46,25 +48,41 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
       if (eventsError) throw eventsError;
 
+      // Fetch user's participation if logged in
+      let userParticipation: { event_id: string; status: string }[] = [];
+      if (user) {
+        const { data: participationData, error: participationError } = await supabase
+          .from('event_participants')
+          .select('event_id, status')
+          .eq('user_id', user.id);
+
+        if (!participationError && participationData) {
+          userParticipation = participationData;
+        }
+      }
+
       // Transform database events to app format
-      const transformedEvents: Event[] = (eventsData || []).map(e => ({
-        id: e.id,
-        title: e.title,
-        description: e.description,
-        date: e.date,
-        time: e.time,
-        category: e.category as EventCategory,
-        location: e.location,
-        organizer: e.organizer,
-        department: e.department || undefined,
-        image: e.image || undefined,
-        interestedCount: e.interested_count,
-        goingCount: e.going_count,
-        interestedUsers: e.interested_users || [],
-        goingUsers: e.going_users || [],
-        status: e.status as 'active' | 'closed',
-        createdAt: e.created_at
-      }));
+      const transformedEvents: Event[] = (eventsData || []).map(e => {
+        const participation = userParticipation.find(p => p.event_id === e.id);
+        return {
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          date: e.date,
+          time: e.time,
+          category: e.category as EventCategory,
+          location: e.location,
+          organizer: e.organizer,
+          department: e.department || undefined,
+          image: e.image || undefined,
+          interestedCount: e.interested_count,
+          goingCount: e.going_count,
+          status: e.status as 'active' | 'closed',
+          createdAt: e.created_at,
+          userInterested: participation?.status === 'interested',
+          userGoing: participation?.status === 'going'
+        };
+      });
 
       setEvents(transformedEvents);
 
@@ -105,13 +123,13 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user]);
 
   const refreshEvents = async () => {
     await fetchData();
   };
 
-  const addEvent = async (eventData: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'interestedUsers' | 'goingUsers' | 'createdAt'>) => {
+  const addEvent = async (eventData: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'createdAt' | 'userInterested' | 'userGoing'>) => {
     try {
       // Check for duplicate
       const duplicate = events.find(
@@ -137,9 +155,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           image: eventData.image || null,
           status: eventData.status,
           interested_count: 0,
-          going_count: 0,
-          interested_users: [],
-          going_users: []
+          going_count: 0
         })
         .select()
         .single();
@@ -160,10 +176,10 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         image: data.image || undefined,
         interestedCount: data.interested_count,
         goingCount: data.going_count,
-        interestedUsers: data.interested_users || [],
-        goingUsers: data.going_users || [],
         status: data.status as 'active' | 'closed',
-        createdAt: data.created_at
+        createdAt: data.created_at,
+        userInterested: false,
+        userGoing: false
       };
 
       setEvents(prev => [newEvent, ...prev]);
@@ -190,8 +206,6 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (eventData.status !== undefined) updateData.status = eventData.status;
       if (eventData.interestedCount !== undefined) updateData.interested_count = eventData.interestedCount;
       if (eventData.goingCount !== undefined) updateData.going_count = eventData.goingCount;
-      if (eventData.interestedUsers !== undefined) updateData.interested_users = eventData.interestedUsers;
-      if (eventData.goingUsers !== undefined) updateData.going_users = eventData.goingUsers;
 
       const { error } = await supabase
         .from('events')
@@ -229,100 +243,172 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
-  const toggleInterested = async (eventId: string, userId: string) => {
+  const toggleInterested = async (eventId: string) => {
+    if (!user) {
+      toast.error('Please login to mark interest');
+      return;
+    }
+
     try {
       const event = events.find(e => e.id === eventId);
       if (!event) return;
 
-      const isInterested = event.interestedUsers.includes(userId);
-      let newInterestedUsers: string[];
-      let newInterestedCount: number;
-      let newGoingUsers = event.goingUsers;
-      let newGoingCount = event.goingCount;
+      const isCurrentlyInterested = event.userInterested;
+      const wasGoing = event.userGoing;
 
-      if (isInterested) {
-        newInterestedUsers = event.interestedUsers.filter(id => id !== userId);
-        newInterestedCount = event.interestedCount - 1;
+      if (isCurrentlyInterested) {
+        // Remove interest
+        await supabase
+          .from('event_participants')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('user_id', user.id);
+
+        // Update count
+        await supabase
+          .from('events')
+          .update({ interested_count: Math.max(0, event.interestedCount - 1) })
+          .eq('id', eventId);
+
+        setEvents(prev => prev.map(e => 
+          e.id === eventId 
+            ? { ...e, userInterested: false, interestedCount: Math.max(0, e.interestedCount - 1) }
+            : e
+        ));
       } else {
-        newInterestedUsers = [...event.interestedUsers, userId];
-        newInterestedCount = event.interestedCount + 1;
-        
-        // Remove from going if was going
-        if (event.goingUsers.includes(userId)) {
-          newGoingUsers = event.goingUsers.filter(id => id !== userId);
-          newGoingCount = event.goingCount - 1;
+        // If was going, update to interested
+        if (wasGoing) {
+          await supabase
+            .from('event_participants')
+            .update({ status: 'interested' })
+            .eq('event_id', eventId)
+            .eq('user_id', user.id);
+
+          // Update counts
+          await supabase
+            .from('events')
+            .update({ 
+              interested_count: event.interestedCount + 1,
+              going_count: Math.max(0, event.goingCount - 1)
+            })
+            .eq('id', eventId);
+
+          setEvents(prev => prev.map(e => 
+            e.id === eventId 
+              ? { 
+                  ...e, 
+                  userInterested: true, 
+                  userGoing: false,
+                  interestedCount: e.interestedCount + 1,
+                  goingCount: Math.max(0, e.goingCount - 1)
+                }
+              : e
+          ));
+        } else {
+          // Add new interest
+          await supabase
+            .from('event_participants')
+            .insert({ event_id: eventId, user_id: user.id, status: 'interested' });
+
+          // Update count
+          await supabase
+            .from('events')
+            .update({ interested_count: event.interestedCount + 1 })
+            .eq('id', eventId);
+
+          setEvents(prev => prev.map(e => 
+            e.id === eventId 
+              ? { ...e, userInterested: true, interestedCount: e.interestedCount + 1 }
+              : e
+          ));
         }
       }
-
-      const { error } = await supabase
-        .from('events')
-        .update({
-          interested_users: newInterestedUsers,
-          interested_count: newInterestedCount,
-          going_users: newGoingUsers,
-          going_count: newGoingCount
-        })
-        .eq('id', eventId);
-
-      if (error) throw error;
-
-      setEvents(prev => 
-        prev.map(e => 
-          e.id === eventId 
-            ? { ...e, interestedUsers: newInterestedUsers, interestedCount: newInterestedCount, goingUsers: newGoingUsers, goingCount: newGoingCount }
-            : e
-        )
-      );
     } catch (error) {
       console.error('Error toggling interested:', error);
       toast.error('Failed to update interest');
     }
   };
 
-  const toggleGoing = async (eventId: string, userId: string) => {
+  const toggleGoing = async (eventId: string) => {
+    if (!user) {
+      toast.error('Please login to mark attendance');
+      return;
+    }
+
     try {
       const event = events.find(e => e.id === eventId);
       if (!event) return;
 
-      const isGoing = event.goingUsers.includes(userId);
-      let newGoingUsers: string[];
-      let newGoingCount: number;
-      let newInterestedUsers = event.interestedUsers;
-      let newInterestedCount = event.interestedCount;
+      const isCurrentlyGoing = event.userGoing;
+      const wasInterested = event.userInterested;
 
-      if (isGoing) {
-        newGoingUsers = event.goingUsers.filter(id => id !== userId);
-        newGoingCount = event.goingCount - 1;
+      if (isCurrentlyGoing) {
+        // Remove going
+        await supabase
+          .from('event_participants')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('user_id', user.id);
+
+        // Update count
+        await supabase
+          .from('events')
+          .update({ going_count: Math.max(0, event.goingCount - 1) })
+          .eq('id', eventId);
+
+        setEvents(prev => prev.map(e => 
+          e.id === eventId 
+            ? { ...e, userGoing: false, goingCount: Math.max(0, e.goingCount - 1) }
+            : e
+        ));
       } else {
-        newGoingUsers = [...event.goingUsers, userId];
-        newGoingCount = event.goingCount + 1;
-        
-        // Remove from interested if was interested
-        if (event.interestedUsers.includes(userId)) {
-          newInterestedUsers = event.interestedUsers.filter(id => id !== userId);
-          newInterestedCount = event.interestedCount - 1;
+        // If was interested, update to going
+        if (wasInterested) {
+          await supabase
+            .from('event_participants')
+            .update({ status: 'going' })
+            .eq('event_id', eventId)
+            .eq('user_id', user.id);
+
+          // Update counts
+          await supabase
+            .from('events')
+            .update({ 
+              going_count: event.goingCount + 1,
+              interested_count: Math.max(0, event.interestedCount - 1)
+            })
+            .eq('id', eventId);
+
+          setEvents(prev => prev.map(e => 
+            e.id === eventId 
+              ? { 
+                  ...e, 
+                  userGoing: true, 
+                  userInterested: false,
+                  goingCount: e.goingCount + 1,
+                  interestedCount: Math.max(0, e.interestedCount - 1)
+                }
+              : e
+          ));
+        } else {
+          // Add new going
+          await supabase
+            .from('event_participants')
+            .insert({ event_id: eventId, user_id: user.id, status: 'going' });
+
+          // Update count
+          await supabase
+            .from('events')
+            .update({ going_count: event.goingCount + 1 })
+            .eq('id', eventId);
+
+          setEvents(prev => prev.map(e => 
+            e.id === eventId 
+              ? { ...e, userGoing: true, goingCount: e.goingCount + 1 }
+              : e
+          ));
         }
       }
-
-      const { error } = await supabase
-        .from('events')
-        .update({
-          going_users: newGoingUsers,
-          going_count: newGoingCount,
-          interested_users: newInterestedUsers,
-          interested_count: newInterestedCount
-        })
-        .eq('id', eventId);
-
-      if (error) throw error;
-
-      setEvents(prev => 
-        prev.map(e => 
-          e.id === eventId 
-            ? { ...e, goingUsers: newGoingUsers, goingCount: newGoingCount, interestedUsers: newInterestedUsers, interestedCount: newInterestedCount }
-            : e
-        )
-      );
     } catch (error) {
       console.error('Error toggling going:', error);
       toast.error('Failed to update attendance');

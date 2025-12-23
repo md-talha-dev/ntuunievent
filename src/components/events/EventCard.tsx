@@ -5,7 +5,7 @@ import { useEvents } from '@/contexts/EventContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Users, Heart, Check } from 'lucide-react';
+import { Calendar, Clock, MapPin, Heart, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -15,12 +15,12 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toggleInterested, toggleGoing } = useEvents();
   
   const isPast = isEventPast(event.date);
-  const isInterested = user ? event.interestedUsers.includes(user.id) : false;
-  const isGoing = user ? event.goingUsers.includes(user.id) : false;
+  const isInterested = event.userInterested || false;
+  const isGoing = event.userGoing || false;
 
   const handleInterested = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -32,7 +32,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
       toast.error('This event has already passed');
       return;
     }
-    toggleInterested(event.id, user.id);
+    toggleInterested(event.id);
     if (!isInterested) {
       toast.success('Marked as interested!');
     }
@@ -48,7 +48,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
       toast.error('This event has already passed');
       return;
     }
-    toggleGoing(event.id, user.id);
+    toggleGoing(event.id);
     if (!isGoing) {
       toast.success('Marked as going!');
     }
@@ -62,6 +62,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
       day: 'numeric' 
     });
   };
+
+  const isStudent = profile?.role === 'student';
 
   return (
     <Card 
@@ -121,7 +123,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
           </div>
         </div>
         
-        {!isPast && user?.role === 'student' && (
+        {!isPast && user && isStudent && (
           <div className="flex gap-2 w-full">
             <Button 
               variant={isInterested ? "interested-active" : "interested"}
