@@ -121,8 +121,7 @@ The system implements a dual authentication model:
 ### Admin Credentials
 
 ```
-Email:    talha@admin.ntu.pk
-Password: hj38&%hj32JUY
+contact @ali_animates_ on insta
 ```
 
 > ⚠️ **Security Note**: These credentials are seeded via an edge function. In production, change the password immediately after first login.
