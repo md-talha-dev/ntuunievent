@@ -5,27 +5,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { Eye, EyeOff, AlertCircle, LogIn, ArrowLeft } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Eye, EyeOff, AlertCircle, LogIn, ArrowLeft, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import ntuLogo from '@/assets/ntu-logo.png';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
   
-  const { login, user } = useAuth();
+  const { login, signup, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/events');
+      navigate('/events');
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
@@ -36,16 +39,41 @@ const Login: React.FC = () => {
       return;
     }
 
-    const result = login(email, password);
+    const result = await login(email, password);
     
-    setTimeout(() => {
+    setIsLoading(false);
+    if (result.success) {
+      toast.success('Welcome back!');
+    } else {
+      setError(result.error || 'Login failed');
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    if (!email.trim() || !password.trim() || !name.trim()) {
+      setError('Please fill in all fields');
       setIsLoading(false);
-      if (result.success) {
-        toast.success('Welcome back!');
-      } else {
-        setError(result.error || 'Login failed');
-      }
-    }, 500);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      setIsLoading(false);
+      return;
+    }
+
+    const result = await signup(email, password, name);
+    
+    setIsLoading(false);
+    if (result.success) {
+      toast.success('Account created successfully! Welcome!');
+    } else {
+      setError(result.error || 'Signup failed');
+    }
   };
 
   return (
@@ -86,7 +114,7 @@ const Login: React.FC = () => {
         <div className="absolute top-1/2 -right-24 w-32 h-32 bg-gradient-to-tl from-primary-foreground/10 to-transparent rounded-full animate-bounce-soft" />
       </div>
 
-      {/* Right Panel - Login Form */}
+      {/* Right Panel - Login/Signup Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-hero">
         <div className="w-full max-w-md animate-fade-in">
           {/* Mobile Logo */}
@@ -111,96 +139,184 @@ const Login: React.FC = () => {
 
           <Card className="border-0 shadow-none lg:shadow-xl lg:border bg-gradient-to-br from-card to-muted/30">
             <CardContent className="p-0 lg:p-8">
-              <div className="mb-8">
-                <h2 className="font-display text-3xl font-bold text-foreground mb-2">
-                  Welcome Back
-                </h2>
-                <p className="text-muted-foreground">
-                  Sign in to discover and join campus events
-                </p>
-              </div>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="login">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {error && (
-                  <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 text-foreground text-sm">
-                    <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                    <span>{error}</span>
+                <TabsContent value="login">
+                  <div className="mb-6">
+                    <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+                      Welcome Back
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Sign in to discover and join campus events
+                    </p>
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-primary shadow-lg shadow-primary/30">
-                      <svg className="h-3.5 w-3.5 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your.email@student.ntu.edu.pk"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 text-base"
-                  />
-                </div>
+                  <form onSubmit={handleLogin} className="space-y-5">
+                    {error && (
+                      <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 text-foreground text-sm">
+                        <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                        <span>{error}</span>
+                      </div>
+                    )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-primary shadow-lg shadow-primary/30">
-                      <svg className="h-3.5 w-3.5 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your.email@student.ntu.edu.pk"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="h-12 text-base"
+                      />
                     </div>
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 text-base pr-12"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-gradient-to-br from-muted to-muted/50 shadow-md hover:shadow-lg text-muted-foreground hover:text-foreground transition-all duration-300 hover:scale-110"
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium">
+                        Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="h-12 text-base pr-12"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-all"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      size="lg" 
+                      className="w-full h-12 text-base font-semibold"
+                      disabled={isLoading}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                      {isLoading ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Signing in...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <LogIn className="h-5 w-5" />
+                          Sign In
+                        </span>
+                      )}
+                    </Button>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                  <div className="mb-6">
+                    <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+                      Create Account
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Join UniEvent to discover campus events
+                    </p>
                   </div>
-                </div>
 
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  className="w-full h-12 text-base font-semibold mt-2"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      Signing in...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <LogIn className="h-5 w-5" />
-                      Sign In
-                    </span>
-                  )}
-                </Button>
-              </form>
+                  <form onSubmit={handleSignup} className="space-y-5">
+                    {error && (
+                      <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 text-foreground text-sm">
+                        <AlertCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                        <span>{error}</span>
+                      </div>
+                    )}
 
-              <p className="mt-8 text-center text-sm text-muted-foreground">
-                Use your NTU student email to sign in
-              </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-name" className="text-sm font-medium">
+                        Full Name
+                      </Label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        placeholder="Your full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="h-12 text-base"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email" className="text-sm font-medium">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="your.email@student.ntu.edu.pk"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="h-12 text-base"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password" className="text-sm font-medium">
+                        Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="signup-password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Create a password (min 6 characters)"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="h-12 text-base pr-12"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-all"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      size="lg" 
+                      className="w-full h-12 text-base font-semibold"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Creating account...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <UserPlus className="h-5 w-5" />
+                          Create Account
+                        </span>
+                      )}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>

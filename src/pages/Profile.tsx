@@ -9,16 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { 
-  User, 
   Mail, 
   Heart, 
   CalendarCheck, 
-  Calendar,
   Sparkles
 } from 'lucide-react';
 
 const Profile: React.FC = () => {
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   const { events } = useEvents();
   const navigate = useNavigate();
 
@@ -29,14 +27,12 @@ const Profile: React.FC = () => {
   }, [user, isLoading, navigate]);
 
   const interestedEvents = useMemo(() => {
-    if (!user) return [];
-    return events.filter(event => event.interestedUsers.includes(user.id));
-  }, [events, user]);
+    return events.filter(event => event.userInterested);
+  }, [events]);
 
   const goingEvents = useMemo(() => {
-    if (!user) return [];
-    return events.filter(event => event.goingUsers.includes(user.id));
-  }, [events, user]);
+    return events.filter(event => event.userGoing);
+  }, [events]);
 
   const getInitials = (name: string) => {
     return name
@@ -60,6 +56,10 @@ const Profile: React.FC = () => {
 
   if (!user) return null;
 
+  const displayName = profile?.name || user.email?.split('@')[0] || 'User';
+  const displayEmail = profile?.email || user.email || '';
+  const displayRole = profile?.role || 'student';
+
   return (
     <div className="min-h-screen bg-gradient-hero">
       <Header />
@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
           <div className="relative mb-4">
             <Avatar className="h-24 w-24 border-4 border-primary/30 shadow-xl shadow-primary/20">
               <AvatarFallback className="bg-gradient-primary text-primary-foreground text-2xl font-bold">
-                {getInitials(user.name)}
+                {getInitials(displayName)}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-2 -right-2 p-2 rounded-full bg-gradient-primary shadow-lg animate-float">
@@ -79,16 +79,16 @@ const Profile: React.FC = () => {
           </div>
           
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-            {user.name}
+            {displayName}
           </h1>
           
           <div className="flex items-center gap-2 text-muted-foreground mb-3">
             <Mail className="h-4 w-4" />
-            <span className="text-sm">{user.email}</span>
+            <span className="text-sm">{displayEmail}</span>
           </div>
           
           <Badge className="bg-gradient-primary text-primary-foreground border-0 capitalize px-4 py-1">
-            {user.role}
+            {displayRole}
           </Badge>
         </div>
 

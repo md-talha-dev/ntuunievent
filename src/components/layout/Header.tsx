@@ -15,11 +15,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import ntuLogo from '@/assets/ntu-logo.png';
 
 const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -31,6 +31,10 @@ const Header: React.FC = () => {
       .toUpperCase()
       .slice(0, 2);
   };
+
+  const displayName = profile?.name || user?.email?.split('@')[0] || 'User';
+  const displayEmail = profile?.email || user?.email || '';
+  const displayRole = profile?.role || 'student';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-gradient-to-r from-background via-background to-muted/30 backdrop-blur-lg supports-[backdrop-filter]:bg-background/80">
@@ -48,7 +52,7 @@ const Header: React.FC = () => {
         <nav className="flex items-center gap-4">
           {user ? (
             <>
-              {user.role === 'admin' && (
+              {isAdmin && (
                 <Link to="/admin">
                   <Button variant="ghost" size="sm" className="gap-2">
                     <LayoutDashboard className="h-4 w-4" />
@@ -68,7 +72,7 @@ const Header: React.FC = () => {
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full transition-transform hover:scale-110">
                     <Avatar className="h-10 w-10 border-2 border-primary/30 hover:border-primary transition-colors">
                       <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
-                        {getInitials(user.name)}
+                        {getInitials(displayName)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -76,12 +80,12 @@ const Header: React.FC = () => {
                 <DropdownMenuContent className="w-56 bg-gradient-to-br from-popover to-muted/50" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm font-medium leading-none">{displayName}</p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
+                        {displayEmail}
                       </p>
                       <span className="mt-1 inline-flex w-fit rounded-full bg-gradient-primary px-2 py-0.5 text-xs font-medium text-primary-foreground capitalize">
-                        {user.role}
+                        {displayRole}
                       </span>
                     </div>
                   </DropdownMenuLabel>
