@@ -110,12 +110,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
       <CardFooter className="flex flex-col gap-3 pt-3 border-t border-gradient-to-r from-transparent via-border to-transparent">
         <div className="flex items-center justify-between w-full text-sm">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-amber-700 transition-colors">
-              <Heart className="h-4 w-4 text-amber-700 group-hover:animate-bounce-soft" />
+            <span className="flex items-center gap-1 text-foreground transition-colors">
+              <Heart className="h-4 w-4 text-foreground group-hover:animate-bounce-soft" />
               <span className="font-medium">{event.interestedCount}</span> interested
             </span>
-            <span className="flex items-center gap-1 text-amber-700 transition-colors">
-              <Check className="h-4 w-4 text-amber-700 group-hover:animate-bounce-soft" />
+            <span className="flex items-center gap-1 text-foreground transition-colors">
+              <Check className="h-4 w-4 text-foreground group-hover:animate-bounce-soft" />
               <span className="font-medium">{event.goingCount}</span> going
             </span>
           </div>
