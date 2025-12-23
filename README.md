@@ -158,25 +158,6 @@ CREATE TYPE public.app_role AS ENUM ('admin', 'student');
 | View Own Profile    | ✅    | ✅      | ❌     |
 | Sign Up             | ❌    | ✅      | ❌     |
 
-### Role Checking Function
-
-```sql
-CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role app_role)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT EXISTS (
-    SELECT 1
-    FROM public.user_roles
-    WHERE user_id = _user_id
-      AND role = _role
-  )
-$$;
-```
-
 ---
 
 ## Database Schema
@@ -288,26 +269,6 @@ ntu-events/
 ```
 
 ---
-
-## API & Edge Functions
-
-### Edge Function: seed-admin
-
-**Purpose**: Creates and configures the admin user account.
-
-**Endpoint**: `/functions/v1/seed-admin`
-
-**Method**: POST
-
-**Response**:
-
-```json
-{
-  "success": true,
-  "message": "Admin user created and role assigned successfully",
-  "userId": "uuid"
-}
-```
 
 **Implementation**:
 
