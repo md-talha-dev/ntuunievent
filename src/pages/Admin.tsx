@@ -135,8 +135,8 @@ const Admin: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
             { label: 'Total Events', value: stats.totalEvents, icon: Calendar, gradient: 'bg-primary', iconColor: 'text-primary-foreground', delay: '0ms' },
-            { label: 'Active Events', value: stats.activeEvents, icon: Users, gradient: 'bg-success', iconColor: 'text-success-foreground', delay: '100ms' },
-            { label: 'Total Interested', value: stats.totalInterested, icon: Heart, gradient: 'bg-info', iconColor: 'text-info-foreground', delay: '200ms' },
+            { label: 'Active Events', value: stats.activeEvents, icon: Users, gradient: 'bg-amber-700', iconColor: 'text-white', delay: '100ms' },
+            { label: 'Total Interested', value: stats.totalInterested, icon: Heart, gradient: 'bg-amber-700', iconColor: 'text-white', delay: '200ms' },
             { label: 'Total Going', value: stats.totalGoing, icon: Check, gradient: 'bg-accent', iconColor: 'text-accent-foreground', delay: '300ms' },
           ].map((stat) => (
             <Card 
