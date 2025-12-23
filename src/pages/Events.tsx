@@ -83,7 +83,7 @@ const Events: React.FC = () => {
         {filteredEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Calendar className="h-8 w-8 text-muted-foreground" />
+              <Calendar className="h-8 w-8 icon-3d" />
             </div>
             <h3 className="font-display text-lg font-semibold text-foreground mb-2">
               No events found

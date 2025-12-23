@@ -126,7 +126,7 @@ const Admin: React.FC = () => {
             onClick={handleAddEvent} 
             className="animate-slide-up shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-5 w-5 icon-3d-sm" />
             Add Event
           </Button>
         </div>
@@ -167,7 +167,7 @@ const Admin: React.FC = () => {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-fade-in">
           <div className="relative flex-1 group">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 icon-3d-sm transition-colors" />
             <Input
               placeholder="Search events..."
               value={searchQuery}
@@ -204,7 +204,7 @@ const Admin: React.FC = () => {
         {filteredEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
             <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-muted to-primary/10 flex items-center justify-center mb-4 shadow-xl animate-float">
-              <Calendar className="h-10 w-10 text-muted-foreground" />
+              <Calendar className="h-10 w-10 icon-3d-lg" />
             </div>
             <h3 className="font-display text-lg font-semibold text-foreground mb-2">
               No events found
@@ -213,7 +213,7 @@ const Admin: React.FC = () => {
               No events match your current filters. Try adjusting your search or create a new event.
             </p>
             <Button variant="hero" onClick={handleAddEvent} className="shadow-xl">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 icon-3d-sm" />
               Create Event
             </Button>
           </div>

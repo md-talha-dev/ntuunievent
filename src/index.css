@@ -53,6 +53,11 @@
     --info: 0 100% 25%;
     --info-foreground: 0 0% 100%;
 
+    /* Brown color for icons */
+    --icon-brown: 30 60% 35%;
+    --icon-brown-light: 30 50% 50%;
+    --icon-brown-dark: 25 70% 25%;
+
     /* Rich Gradients - Maroon to Light variations */
     --gradient-primary: linear-gradient(135deg, hsl(0, 100%, 23%) 0%, hsl(0, 85%, 35%) 50%, hsl(0, 100%, 23%) 100%);
     --gradient-secondary: linear-gradient(45deg, hsl(0, 100%, 28%) 0%, hsl(0, 90%, 40%) 100%);
@@ -72,6 +77,12 @@
     --shadow-lg: 0 12px 24px -4px hsl(0 100% 23% / 0.15), 0 4px 8px -4px hsl(0 100% 23% / 0.08);
     --shadow-xl: 0 24px 48px -8px hsl(0 100% 23% / 0.18), 0 12px 16px -6px hsl(0 100% 23% / 0.1);
     --shadow-glow: 0 0 30px hsl(0 100% 23% / 0.25), 0 0 60px hsl(0 100% 23% / 0.15);
+
+    /* 3D Icon shadow */
+    --icon-shadow-3d: 
+      0 2px 4px hsl(30 60% 35% / 0.3),
+      0 4px 8px hsl(30 60% 35% / 0.2),
+      0 8px 16px hsl(30 60% 35% / 0.1);
   }
 
   .dark {
@@ -231,6 +242,35 @@
 
   .animate-scale-in {
     animation: scaleIn 0.3s ease-out forwards;
+  }
+
+  /* Brown 3D Icons */
+  .icon-3d {
+    color: hsl(var(--icon-brown));
+    filter: drop-shadow(0 2px 2px hsl(var(--icon-brown-dark) / 0.4))
+            drop-shadow(0 4px 4px hsl(var(--icon-brown) / 0.3))
+            drop-shadow(0 6px 8px hsl(var(--icon-brown-light) / 0.2));
+    transition: all 0.3s ease;
+  }
+
+  .icon-3d:hover {
+    filter: drop-shadow(0 3px 3px hsl(var(--icon-brown-dark) / 0.5))
+            drop-shadow(0 6px 6px hsl(var(--icon-brown) / 0.4))
+            drop-shadow(0 10px 12px hsl(var(--icon-brown-light) / 0.3));
+    transform: translateY(-2px);
+  }
+
+  .icon-3d-sm {
+    color: hsl(var(--icon-brown));
+    filter: drop-shadow(0 1px 1px hsl(var(--icon-brown-dark) / 0.3))
+            drop-shadow(0 2px 3px hsl(var(--icon-brown) / 0.2));
+  }
+
+  .icon-3d-lg {
+    color: hsl(var(--icon-brown));
+    filter: drop-shadow(0 3px 4px hsl(var(--icon-brown-dark) / 0.5))
+            drop-shadow(0 6px 10px hsl(var(--icon-brown) / 0.35))
+            drop-shadow(0 10px 16px hsl(var(--icon-brown-light) / 0.25));
   }
 }
 

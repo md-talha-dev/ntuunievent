@@ -36,7 +36,7 @@ const Index: React.FC = () => {
         <div className="container relative py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4 icon-3d-sm" />
               Discover Campus Events
             </div>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-slide-up">
@@ -52,7 +52,7 @@ const Index: React.FC = () => {
                 <Link to="/events">
                   <Button variant="hero" size="xl">
                     Browse Events
-                    <ArrowRight className="h-5 w-5" />
+                    <ArrowRight className="h-5 w-5 icon-3d-sm" />
                   </Button>
                 </Link>
               ) : (
@@ -60,7 +60,7 @@ const Index: React.FC = () => {
                   <Link to="/login">
                     <Button variant="hero" size="xl">
                       Get Started
-                      <ArrowRight className="h-5 w-5" />
+                      <ArrowRight className="h-5 w-5 icon-3d-sm" />
                     </Button>
                   </Link>
                   <Link to="/login">
@@ -76,28 +76,28 @@ const Index: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 border-b border-border">
+      <section className="py-8 md:py-12 border-b border-border">
         <div className="container">
-          <div className="grid grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 mb-3">
-                <Calendar className="h-6 w-6 text-primary" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            <div className="text-center p-4 rounded-xl bg-card/50 shadow-md sm:bg-transparent sm:shadow-none">
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 mb-3 shadow-lg">
+                <Calendar className="h-6 w-6 icon-3d" />
               </div>
-              <p className="text-3xl font-bold text-foreground">{stats.totalEvents}+</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.totalEvents}+</p>
               <p className="text-sm text-muted-foreground">Upcoming Events</p>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-success/10 mb-3">
-                <Users className="h-6 w-6 text-success" />
+            <div className="text-center p-4 rounded-xl bg-card/50 shadow-md sm:bg-transparent sm:shadow-none">
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-success/10 mb-3 shadow-lg">
+                <Users className="h-6 w-6 icon-3d" />
               </div>
-              <p className="text-3xl font-bold text-foreground">{stats.totalStudents.toLocaleString()}+</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.totalStudents.toLocaleString()}+</p>
               <p className="text-sm text-muted-foreground">Active Students</p>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-accent/20 mb-3">
-                <Star className="h-6 w-6 text-accent-foreground" />
+            <div className="text-center p-4 rounded-xl bg-card/50 shadow-md sm:bg-transparent sm:shadow-none">
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-accent/20 mb-3 shadow-lg">
+                <Star className="h-6 w-6 icon-3d" />
               </div>
-              <p className="text-3xl font-bold text-foreground">{stats.totalOrganizers}+</p>
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">{stats.totalOrganizers}+</p>
               <p className="text-sm text-muted-foreground">Organizers</p>
             </div>
           </div>
@@ -120,7 +120,7 @@ const Index: React.FC = () => {
               <Link to={user ? "/events" : "/login"}>
                 <Button variant="ghost" className="gap-2">
                   View All
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 icon-3d-sm" />
                 </Button>
               </Link>
             </div>
@@ -158,7 +158,7 @@ const Index: React.FC = () => {
                 <Link to={user ? "/events" : "/login"}>
                   <Button variant="accent" size="xl">
                     {user ? 'Browse Events' : 'Sign In Now'}
-                    <ArrowRight className="h-5 w-5" />
+                    <ArrowRight className="h-5 w-5 icon-3d-sm" />
                   </Button>
                 </Link>
               </div>
@@ -172,12 +172,12 @@ const Index: React.FC = () => {
         <div className="container">
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
-                <Calendar className="h-4 w-4 text-primary-foreground" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
+                <Calendar className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="font-display font-semibold text-foreground">UniEvent</span>
+              <span className="font-display font-semibold text-lg text-foreground">UniEvent</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center">
               © 2025 UniEvent - National Textile University. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground/70 mt-2">

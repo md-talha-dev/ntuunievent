@@ -97,13 +97,13 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
         
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-            <Calendar className="h-4 w-4 text-primary animate-pulse-glow" />
+            <Calendar className="h-4 w-4 icon-3d-sm" />
             <span>{formatDate(event.date)}</span>
-            <Clock className="h-4 w-4 text-primary ml-2" />
+            <Clock className="h-4 w-4 icon-3d-sm ml-2" />
             <span>{event.time}</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-            <MapPin className="h-4 w-4 text-primary" />
+            <MapPin className="h-4 w-4 icon-3d-sm" />
             <span className="truncate">{event.location}</span>
           </div>
         </div>
@@ -113,11 +113,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
         <div className="flex items-center justify-between w-full text-sm">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 text-foreground transition-colors">
-              <Heart className="h-4 w-4 text-foreground group-hover:animate-bounce-soft" />
+              <Heart className="h-4 w-4 icon-3d-sm" />
               <span className="font-medium">{event.interestedCount}</span> interested
             </span>
             <span className="flex items-center gap-1 text-foreground transition-colors">
-              <Check className="h-4 w-4 text-foreground group-hover:animate-bounce-soft" />
+              <Check className="h-4 w-4 icon-3d-sm" />
               <span className="font-medium">{event.goingCount}</span> going
             </span>
           </div>
@@ -131,7 +131,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
               className="flex-1"
               onClick={handleInterested}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="h-4 w-4 icon-3d-sm" />
               {isInterested ? 'Interested' : 'Interested'}
             </Button>
             <Button 
@@ -140,7 +140,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
               className="flex-1"
               onClick={handleGoing}
             >
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 icon-3d-sm" />
               {isGoing ? 'Going' : 'Going'}
             </Button>
           </div>
