@@ -133,11 +133,11 @@ const Admin: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Events', value: stats.totalEvents, icon: Calendar, gradient: 'bg-gradient-primary', delay: '0ms' },
-            { label: 'Active Events', value: stats.activeEvents, icon: Users, gradient: 'bg-gradient-to-r from-success to-success/70', delay: '100ms' },
-            { label: 'Total Interested', value: stats.totalInterested, icon: Heart, gradient: 'bg-gradient-to-r from-info to-info/70', delay: '200ms' },
-            { label: 'Total Going', value: stats.totalGoing, icon: Check, gradient: 'bg-gradient-to-r from-accent to-accent/70', delay: '300ms' },
+        {[
+            { label: 'Total Events', value: stats.totalEvents, icon: Calendar, gradient: 'bg-primary', iconColor: 'text-primary-foreground', delay: '0ms' },
+            { label: 'Active Events', value: stats.activeEvents, icon: Users, gradient: 'bg-success', iconColor: 'text-success-foreground', delay: '100ms' },
+            { label: 'Total Interested', value: stats.totalInterested, icon: Heart, gradient: 'bg-info', iconColor: 'text-info-foreground', delay: '200ms' },
+            { label: 'Total Going', value: stats.totalGoing, icon: Check, gradient: 'bg-accent', iconColor: 'text-accent-foreground', delay: '300ms' },
           ].map((stat) => (
             <Card 
               key={stat.label}
@@ -150,7 +150,7 @@ const Admin: React.FC = () => {
               <CardHeader className="pb-2 relative">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <div className={`p-2 rounded-xl ${stat.gradient} shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-                    <stat.icon className="h-4 w-4 text-primary-foreground" />
+                    <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
                   </div>
                   {stat.label}
                 </CardTitle>
