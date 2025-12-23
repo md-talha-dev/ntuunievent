@@ -1,4 +1,4 @@
-# NTU Events Management System
+# UniEvent (NTU Events Management System)
 
 ## Complete End-to-End Documentation
 
@@ -109,7 +109,7 @@ Email:    talha@admin.ntu.pk
 Password: hj38&%hj32JUY
 ```
 
-> ⚠️ **Security Note**: These credentials are seeded via an edge function. In production, change the password immediately after first login.
+> **Security Note**: These credentials are seeded via an edge function. In production, change the password immediately after first login.
 
 ### Student Registration Rules
 
@@ -347,13 +347,13 @@ npm run dev
 
 ### Security Best Practices Implemented
 
-1. ✅ **Role-based access control** via database functions
-2. ✅ **RLS on all tables** for data protection
-3. ✅ **SECURITY DEFINER** functions to prevent recursive RLS
-4. ✅ **Email validation** for student registration
-5. ✅ **Separate roles table** to prevent privilege escalation
-6. ✅ **Server-side role verification** (not client-side)
-7. ✅ **Input validation** using Zod schemas
+1. **Role-based access control** via database functions
+2. **RLS on all tables** for data protection
+3. **SECURITY DEFINER** functions to prevent recursive RLS
+4. **Email validation** for student registration
+5. **Separate roles table** to prevent privilege escalation
+6. **Server-side role verification** (not client-side)
+7. **Input validation** using Zod schemas
 
 ## Version History
 
@@ -363,12 +363,12 @@ npm run dev
 
 ---
 
-## 🎯 Impact
+## Impact
 This system improves **student engagement**, reduces **administrative overhead**, and provides a **scalable digital solution** for campus event management.
 
 ---
 
-## 🏁 Conclusion
+## Conclusion
 NTU Events Management System demonstrates a **real-world, production-ready solution** with strong focus on usability, security, and scalability — making it ideal for institutional adoption.
 
 ---
