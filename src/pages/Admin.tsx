@@ -84,11 +84,11 @@ const Admin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-hero">
       <Header />
       
       <main className="container py-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 animate-fade-in">
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground mb-2">
               Admin Dashboard
@@ -97,7 +97,7 @@ const Admin: React.FC = () => {
               Manage campus events and view statistics
             </p>
           </div>
-          <Button variant="hero" size="lg" onClick={handleAddEvent}>
+          <Button variant="hero" size="lg" onClick={handleAddEvent} className="animate-slide-up">
             <Plus className="h-5 w-5" />
             Add Event
           </Button>
@@ -105,10 +105,12 @@ const Admin: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-card border-border">
+          <Card className="animate-slide-up bg-gradient-to-br from-card via-card to-primary/5" style={{ animationDelay: '0ms' }}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
+                <div className="p-2 rounded-lg bg-gradient-primary">
+                  <Calendar className="h-4 w-4 text-primary-foreground" />
+                </div>
                 Total Events
               </CardTitle>
             </CardHeader>
@@ -116,10 +118,12 @@ const Admin: React.FC = () => {
               <p className="text-3xl font-bold text-foreground">{stats.totalEvents}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-card border-border">
+          <Card className="animate-slide-up bg-gradient-to-br from-card via-card to-success/5" style={{ animationDelay: '100ms' }}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Users className="h-4 w-4 text-success" />
+                <div className="p-2 rounded-lg bg-gradient-to-r from-success to-success/70">
+                  <Users className="h-4 w-4 text-success-foreground" />
+                </div>
                 Active Events
               </CardTitle>
             </CardHeader>
@@ -127,10 +131,12 @@ const Admin: React.FC = () => {
               <p className="text-3xl font-bold text-foreground">{stats.activeEvents}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-card border-border">
+          <Card className="animate-slide-up bg-gradient-to-br from-card via-card to-info/5" style={{ animationDelay: '200ms' }}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Heart className="h-4 w-4 text-info" />
+                <div className="p-2 rounded-lg bg-gradient-to-r from-info to-info/70">
+                  <Heart className="h-4 w-4 text-info-foreground" />
+                </div>
                 Total Interested
               </CardTitle>
             </CardHeader>
@@ -138,10 +144,12 @@ const Admin: React.FC = () => {
               <p className="text-3xl font-bold text-foreground">{stats.totalInterested}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-card border-border">
+          <Card className="animate-slide-up bg-gradient-to-br from-card via-card to-success/5" style={{ animationDelay: '300ms' }}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Check className="h-4 w-4 text-success" />
+                <div className="p-2 rounded-lg bg-gradient-to-r from-success to-success/70">
+                  <Check className="h-4 w-4 text-success-foreground" />
+                </div>
                 Total Going
               </CardTitle>
             </CardHeader>
@@ -152,14 +160,14 @@ const Admin: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search events..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-gradient-to-r from-background to-muted/30 focus:from-background focus:to-background transition-all"
             />
           </div>
           <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as EventCategory | 'all')}>
@@ -189,8 +197,8 @@ const Admin: React.FC = () => {
 
         {/* Events Grid */}
         {filteredEvents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-muted to-primary/10 flex items-center justify-center mb-4 animate-pulse-glow">
               <Calendar className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="font-display text-lg font-semibold text-foreground mb-2">

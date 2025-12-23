@@ -37,20 +37,20 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEdit, onDelete
 
   return (
     <Card className={cn(
-      "overflow-hidden transition-all duration-300 hover:shadow-card-hover animate-fade-in",
+      "overflow-hidden animate-fade-in hover:-translate-y-2",
       isPast && "opacity-70"
     )}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 bg-gradient-to-r from-transparent via-primary/5 to-transparent">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={cn("font-medium", getCategoryColor(event.category))}>
+            <Badge className={cn("font-medium transition-transform hover:scale-105", getCategoryColor(event.category))}>
               {event.category}
             </Badge>
-            <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+            <Badge variant={event.status === 'active' ? 'default' : 'secondary'} className="bg-gradient-primary">
               {event.status}
             </Badge>
             {isPast && (
-              <Badge variant="outline">Past</Badge>
+              <Badge variant="outline" className="border-primary/30">Past</Badge>
             )}
           </div>
         </div>
@@ -74,25 +74,25 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEdit, onDelete
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-4 p-3 rounded-lg bg-muted/50">
+        <div className="flex items-center gap-4 mt-4 p-3 rounded-lg bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30">
           <div className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-info" />
+            <Heart className="h-4 w-4 text-info animate-pulse" />
             <span className="font-semibold">{event.interestedCount}</span>
             <span className="text-xs text-muted-foreground">interested</span>
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-success" />
+            <Check className="h-4 w-4 text-success animate-pulse" />
             <span className="font-semibold">{event.goingCount}</span>
             <span className="text-xs text-muted-foreground">going</span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="flex gap-2 pt-3 border-t border-border">
+      <CardFooter className="flex gap-2 pt-3 border-t border-border/50">
         <Button 
           variant="outline" 
           size="sm" 
-          className="flex-1"
+          className="flex-1 hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10"
           onClick={() => onEdit(event)}
         >
           <Edit className="h-4 w-4 mr-1" />

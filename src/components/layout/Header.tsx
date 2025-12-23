@@ -33,12 +33,12 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-gradient-to-r from-background via-background to-muted/30 backdrop-blur-lg supports-[backdrop-filter]:bg-background/80">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={ntuLogo} alt="NTU Logo" className="h-12 w-auto" />
+          <img src={ntuLogo} alt="NTU Logo" className="h-12 w-auto transition-transform duration-300 group-hover:scale-110" />
           <div>
-            <h1 className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+            <h1 className="font-display text-xl font-bold text-foreground group-hover:text-gradient-primary transition-all">
               UniEvent
             </h1>
             <p className="text-xs text-muted-foreground">NTU Campus Events</p>
@@ -65,22 +65,22 @@ const Header: React.FC = () => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10 border-2 border-primary/20">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full transition-transform hover:scale-110">
+                    <Avatar className="h-10 w-10 border-2 border-primary/30 hover:border-primary transition-colors">
+                      <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56 bg-gradient-to-br from-popover to-muted/50" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user.name}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
-                      <span className="mt-1 inline-flex w-fit rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary capitalize">
+                      <span className="mt-1 inline-flex w-fit rounded-full bg-gradient-primary px-2 py-0.5 text-xs font-medium text-primary-foreground capitalize">
                         {user.role}
                       </span>
                     </div>

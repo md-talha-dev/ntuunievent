@@ -66,15 +66,15 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
   return (
     <Card 
       className={cn(
-        "group overflow-hidden transition-all duration-300 hover:shadow-card-hover cursor-pointer animate-fade-in",
+        "group overflow-hidden cursor-pointer animate-fade-in hover:-translate-y-2 transition-all duration-300",
         isPast && "opacity-60"
       )}
       onClick={() => onViewDetails?.(event)}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 bg-gradient-to-r from-transparent via-primary/5 to-transparent">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1">
-            <Badge className={cn("font-medium", getCategoryColor(event.category))}>
+            <Badge className={cn("font-medium transition-transform hover:scale-105", getCategoryColor(event.category))}>
               {event.category}
             </Badge>
             {isPast && (
@@ -83,7 +83,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
           </div>
           <span className="text-xs text-muted-foreground">{event.organizer}</span>
         </div>
-        <h3 className="font-display text-lg font-semibold leading-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="font-display text-lg font-semibold leading-tight text-foreground group-hover:text-gradient-primary transition-all line-clamp-2">
           {event.title}
         </h3>
       </CardHeader>
@@ -94,28 +94,28 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
         </p>
         
         <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
+            <Calendar className="h-4 w-4 text-primary animate-pulse-glow" />
             <span>{formatDate(event.date)}</span>
             <Clock className="h-4 w-4 text-primary ml-2" />
             <span>{event.time}</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
             <MapPin className="h-4 w-4 text-primary" />
             <span className="truncate">{event.location}</span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-col gap-3 pt-3 border-t border-border">
+      <CardFooter className="flex flex-col gap-3 pt-3 border-t border-gradient-to-r from-transparent via-border to-transparent">
         <div className="flex items-center justify-between w-full text-sm">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Heart className="h-4 w-4 text-info" />
+            <span className="flex items-center gap-1 text-muted-foreground hover:text-info transition-colors">
+              <Heart className="h-4 w-4 text-info group-hover:animate-bounce-soft" />
               <span className="font-medium">{event.interestedCount}</span> interested
             </span>
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Check className="h-4 w-4 text-success" />
+            <span className="flex items-center gap-1 text-muted-foreground hover:text-success transition-colors">
+              <Check className="h-4 w-4 text-success group-hover:animate-bounce-soft" />
               <span className="font-medium">{event.goingCount}</span> going
             </span>
           </div>

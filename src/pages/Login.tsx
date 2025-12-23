@@ -51,47 +51,48 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-primary relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_hsl(0_100%_35%_/_0.4)_0%,_transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_hsl(0_100%_40%_/_0.3)_0%,_transparent_50%)]" />
         <div className="relative z-10 flex flex-col justify-center items-center w-full p-12 text-primary-foreground">
-          <img src={ntuLogo} alt="NTU Logo" className="h-32 w-32 mb-8 drop-shadow-lg" />
-          <h1 className="font-display text-4xl font-bold mb-4 text-center">
+          <img src={ntuLogo} alt="NTU Logo" className="h-32 w-32 mb-8 drop-shadow-2xl animate-float" />
+          <h1 className="font-display text-4xl font-bold mb-4 text-center animate-fade-in">
             UniEvent
           </h1>
-          <p className="text-xl text-primary-foreground/90 text-center max-w-md">
+          <p className="text-xl text-primary-foreground/90 text-center max-w-md animate-slide-up" style={{ animationDelay: '100ms' }}>
             National Textile University
           </p>
-          <p className="text-lg text-primary-foreground/70 text-center mt-2">
+          <p className="text-lg text-primary-foreground/70 text-center mt-2 animate-slide-up" style={{ animationDelay: '200ms' }}>
             Campus Event Discovery Platform
           </p>
-          <div className="mt-12 grid grid-cols-3 gap-8 text-center">
-            <div>
+          <div className="mt-12 grid grid-cols-3 gap-8 text-center animate-slide-up" style={{ animationDelay: '300ms' }}>
+            <div className="p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all duration-300 hover:-translate-y-1">
               <div className="text-3xl font-bold">100+</div>
               <div className="text-sm text-primary-foreground/70">Events</div>
             </div>
-            <div>
+            <div className="p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all duration-300 hover:-translate-y-1">
               <div className="text-3xl font-bold">5000+</div>
               <div className="text-sm text-primary-foreground/70">Students</div>
             </div>
-            <div>
+            <div className="p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm hover:bg-primary-foreground/20 transition-all duration-300 hover:-translate-y-1">
               <div className="text-3xl font-bold">50+</div>
               <div className="text-sm text-primary-foreground/70">Clubs</div>
             </div>
           </div>
         </div>
-        {/* Decorative circles */}
-        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-primary-foreground/5 rounded-full" />
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-primary-foreground/5 rounded-full" />
-        <div className="absolute top-1/2 -right-24 w-32 h-32 bg-primary-foreground/5 rounded-full" />
+        {/* Decorative circles with animation */}
+        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-gradient-to-tr from-primary-foreground/10 to-transparent rounded-full animate-pulse-glow" />
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-gradient-to-bl from-primary-foreground/10 to-transparent rounded-full animate-float" />
+        <div className="absolute top-1/2 -right-24 w-32 h-32 bg-gradient-to-tl from-primary-foreground/10 to-transparent rounded-full animate-bounce-soft" />
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-background">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-hero">
         <div className="w-full max-w-md animate-fade-in">
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={ntuLogo} alt="NTU Logo" className="h-12 w-12" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <img src={ntuLogo} alt="NTU Logo" className="h-12 w-12 group-hover:animate-bounce-soft transition-transform" />
               <div>
                 <h1 className="font-display text-xl font-bold text-foreground">UniEvent</h1>
                 <p className="text-xs text-muted-foreground">NTU Campus Events</p>
@@ -102,13 +103,13 @@ const Login: React.FC = () => {
           {/* Back to Home */}
           <Link 
             to="/" 
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-all hover:-translate-x-1 mb-8"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
 
-          <Card className="border-0 shadow-none lg:shadow-card-hover lg:border">
+          <Card className="border-0 shadow-none lg:shadow-xl lg:border bg-gradient-to-br from-card to-muted/30">
             <CardContent className="p-0 lg:p-8">
               <div className="mb-8">
                 <h2 className="font-display text-3xl font-bold text-foreground mb-2">
