@@ -60,6 +60,13 @@ const Login: React.FC = () => {
       return;
     }
 
+    // Validate student email domain
+    if (!email.toLowerCase().endsWith('@student.ntu.edu.pk')) {
+      setError('Only students with @student.ntu.edu.pk email can sign up');
+      setIsLoading(false);
+      return;
+    }
+
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       setIsLoading(false);
@@ -227,10 +234,10 @@ const Login: React.FC = () => {
                 <TabsContent value="signup">
                   <div className="mb-6">
                     <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                      Create Account
+                      Student Registration
                     </h2>
                     <p className="text-muted-foreground">
-                      Join UniEvent to discover campus events
+                      Sign up with your NTU student email (@student.ntu.edu.pk)
                     </p>
                   </div>
 
