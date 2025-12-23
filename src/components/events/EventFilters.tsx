@@ -1,5 +1,6 @@
 import React from 'react';
-import { CATEGORIES, ORGANIZERS, EventCategory } from '@/lib/data';
+import { EventCategory } from '@/lib/data';
+import { useEvents } from '@/contexts/EventContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, X, Filter } from 'lucide-react';
+import { Search, X, Filter, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface EventFiltersProps {
   searchQuery: string;
@@ -32,6 +34,7 @@ const EventFilters: React.FC<EventFiltersProps> = ({
   showPastEvents,
   setShowPastEvents,
 }) => {
+  const { categories, organizers } = useEvents();
   const hasActiveFilters = searchQuery || categoryFilter !== 'all' || organizerFilter !== 'all' || showPastEvents;
 
   const clearFilters = () => {
@@ -42,16 +45,28 @@ const EventFilters: React.FC<EventFiltersProps> = ({
   };
 
   return (
-    <div className="space-y-4 p-4 rounded-xl bg-card border border-border shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-        <Filter className="h-4 w-4 text-primary" />
-        <span>Filter Events</span>
+    <div className={cn(
+      "space-y-4 p-5 rounded-2xl",
+      "bg-gradient-to-br from-card via-card to-muted/30",
+      "border border-border/50 shadow-xl",
+      "transition-all duration-300 hover:shadow-2xl",
+      "animate-fade-in"
+    )}>
+      <div className="flex items-center gap-3 text-sm font-medium text-foreground">
+        <div className="p-2 rounded-lg bg-gradient-primary shadow-lg">
+          <Filter className="h-4 w-4 text-primary-foreground" />
+        </div>
+        <span className="font-semibold">Filter Events</span>
         {hasActiveFilters && (
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={clearFilters}
-            className="ml-auto text-muted-foreground hover:text-foreground"
+            className={cn(
+              "ml-auto text-muted-foreground hover:text-foreground",
+              "hover:bg-destructive/10 hover:text-destructive",
+              "transition-all duration-300"
+            )}
           >
             <X className="h-4 w-4 mr-1" />
             Clear all
@@ -59,8 +74,8 @@ const EventFilters: React.FC<EventFiltersProps> = ({
         )}
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="relative group">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors duration-300" />
         <Input
           placeholder="Search events..."
           value={searchQuery}
@@ -71,12 +86,12 @@ const EventFilters: React.FC<EventFiltersProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value as EventCategory | 'all')}>
-          <SelectTrigger>
+          <SelectTrigger className="shadow-sm hover:shadow-md transition-shadow duration-300">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
               </SelectItem>
@@ -85,12 +100,12 @@ const EventFilters: React.FC<EventFiltersProps> = ({
         </Select>
 
         <Select value={organizerFilter} onValueChange={setOrganizerFilter}>
-          <SelectTrigger>
+          <SelectTrigger className="shadow-sm hover:shadow-md transition-shadow duration-300">
             <SelectValue placeholder="Organizer" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Organizers</SelectItem>
-            {ORGANIZERS.map((organizer) => (
+            <SelectItem value="all">All Societies</SelectItem>
+            {organizers.map((organizer) => (
               <SelectItem key={organizer} value={organizer}>
                 {organizer}
               </SelectItem>
@@ -101,9 +116,16 @@ const EventFilters: React.FC<EventFiltersProps> = ({
         <Button
           variant={showPastEvents ? "secondary" : "outline"}
           onClick={() => setShowPastEvents(!showPastEvents)}
-          className="w-full"
+          className={cn(
+            "w-full shadow-sm hover:shadow-md transition-all duration-300",
+            showPastEvents && "bg-gradient-to-r from-secondary to-secondary/80"
+          )}
         >
-          {showPastEvents ? 'Showing Past Events' : 'Show Past Events'}
+          <Sparkles className={cn(
+            "h-4 w-4 mr-2 transition-transform duration-300",
+            showPastEvents && "animate-pulse"
+          )} />
+          {showPastEvents ? 'Showing Past' : 'Show Past Events'}
         </Button>
       </div>
     </div>

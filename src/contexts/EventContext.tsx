@@ -1,24 +1,35 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Event, INITIAL_EVENTS, EventCategory } from '@/lib/data';
+import { Event, INITIAL_EVENTS, EventCategory, INITIAL_CATEGORIES, INITIAL_DEPARTMENTS, INITIAL_ORGANIZERS } from '@/lib/data';
 import { toast } from 'sonner';
 
 interface EventContextType {
   events: Event[];
+  categories: EventCategory[];
+  departments: string[];
+  organizers: string[];
   addEvent: (event: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'interestedUsers' | 'goingUsers' | 'createdAt'>) => void;
   updateEvent: (id: string, event: Partial<Event>) => void;
   deleteEvent: (id: string) => void;
   toggleInterested: (eventId: string, userId: string) => void;
   toggleGoing: (eventId: string, userId: string) => void;
   getEventById: (id: string) => Event | undefined;
+  addCategory: (category: string) => void;
+  deleteCategory: (category: string) => void;
+  addDepartment: (department: string) => void;
+  deleteDepartment: (department: string) => void;
+  addOrganizer: (organizer: string) => void;
+  deleteOrganizer: (organizer: string) => void;
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
 
 export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
+  const [categories, setCategories] = useState<EventCategory[]>(INITIAL_CATEGORIES);
+  const [departments, setDepartments] = useState<string[]>(INITIAL_DEPARTMENTS);
+  const [organizers, setOrganizers] = useState<string[]>(INITIAL_ORGANIZERS);
 
   const addEvent = (eventData: Omit<Event, 'id' | 'interestedCount' | 'goingCount' | 'interestedUsers' | 'goingUsers' | 'createdAt'>) => {
-    // Check for duplicate event
     const duplicate = events.find(
       e => e.title.toLowerCase() === eventData.title.toLowerCase() && e.date === eventData.date
     );
@@ -70,7 +81,6 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             interestedCount: event.interestedCount - 1
           };
         } else {
-          // Remove from going if switching
           const wasGoing = event.goingUsers.includes(userId);
           return {
             ...event,
@@ -98,7 +108,6 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             goingCount: event.goingCount - 1
           };
         } else {
-          // Remove from interested if switching
           const wasInterested = event.interestedUsers.includes(userId);
           return {
             ...event,
@@ -114,15 +123,84 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const getEventById = (id: string) => events.find(e => e.id === id);
 
+  // Category Management
+  const addCategory = (category: string) => {
+    if (categories.includes(category as EventCategory)) {
+      toast.error('Category already exists!');
+      return;
+    }
+    setCategories(prev => [...prev, category as EventCategory]);
+    toast.success('Category added successfully!');
+  };
+
+  const deleteCategory = (category: string) => {
+    const eventsWithCategory = events.filter(e => e.category === category);
+    if (eventsWithCategory.length > 0) {
+      toast.error(`Cannot delete category. ${eventsWithCategory.length} event(s) are using it.`);
+      return;
+    }
+    setCategories(prev => prev.filter(c => c !== category));
+    toast.success('Category deleted successfully!');
+  };
+
+  // Department Management
+  const addDepartment = (department: string) => {
+    if (departments.includes(department)) {
+      toast.error('Department already exists!');
+      return;
+    }
+    setDepartments(prev => [...prev, department]);
+    toast.success('Department added successfully!');
+  };
+
+  const deleteDepartment = (department: string) => {
+    const eventsWithDepartment = events.filter(e => e.department === department);
+    if (eventsWithDepartment.length > 0) {
+      toast.error(`Cannot delete department. ${eventsWithDepartment.length} event(s) are using it.`);
+      return;
+    }
+    setDepartments(prev => prev.filter(d => d !== department));
+    toast.success('Department deleted successfully!');
+  };
+
+  // Organizer Management
+  const addOrganizer = (organizer: string) => {
+    if (organizers.includes(organizer)) {
+      toast.error('Organizer/Society already exists!');
+      return;
+    }
+    setOrganizers(prev => [...prev, organizer]);
+    toast.success('Organizer added successfully!');
+  };
+
+  const deleteOrganizer = (organizer: string) => {
+    const eventsWithOrganizer = events.filter(e => e.organizer === organizer);
+    if (eventsWithOrganizer.length > 0) {
+      toast.error(`Cannot delete organizer. ${eventsWithOrganizer.length} event(s) are using it.`);
+      return;
+    }
+    setOrganizers(prev => prev.filter(o => o !== organizer));
+    toast.success('Organizer deleted successfully!');
+  };
+
   return (
     <EventContext.Provider value={{ 
-      events, 
+      events,
+      categories,
+      departments,
+      organizers,
       addEvent, 
       updateEvent, 
       deleteEvent, 
       toggleInterested, 
       toggleGoing,
-      getEventById 
+      getEventById,
+      addCategory,
+      deleteCategory,
+      addDepartment,
+      deleteDepartment,
+      addOrganizer,
+      deleteOrganizer
     }}>
       {children}
     </EventContext.Provider>
