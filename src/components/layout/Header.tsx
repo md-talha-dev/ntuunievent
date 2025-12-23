@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Calendar, LayoutDashboard } from 'lucide-react';
+import { LogOut, Calendar, LayoutDashboard } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import ntuLogo from '@/assets/ntu-logo.png';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -35,9 +36,7 @@ const Header: React.FC = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-primary shadow-sm">
-            <Calendar className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img src={ntuLogo} alt="NTU Logo" className="h-12 w-auto" />
           <div>
             <h1 className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors">
               UniEvent
