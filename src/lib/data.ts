@@ -218,18 +218,8 @@ export const INITIAL_EVENTS: Event[] = [
 ];
 
 export const getCategoryColor = (category: EventCategory): string => {
-  const colors: Record<EventCategory, string> = {
-    Workshop: 'bg-gradient-to-r from-info/20 to-info/10 text-info-foreground border-info/30',
-    Seminar: 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/30',
-    Sports: 'bg-gradient-to-r from-success/20 to-success/10 text-success-foreground border-success/30',
-    Cultural: 'bg-gradient-to-r from-accent/20 to-accent/10 text-accent-foreground border-accent/30',
-    Technical: 'bg-gradient-to-r from-secondary/20 to-secondary/10 text-secondary-foreground border-secondary/30',
-    Career: 'bg-gradient-to-r from-warning/20 to-warning/10 text-warning-foreground border-warning/30',
-    Social: 'bg-gradient-to-r from-muted to-muted/70 text-muted-foreground border-muted-foreground/30',
-    Academic: 'bg-gradient-to-r from-primary/15 to-info/15 text-primary border-primary/20',
-    Competition: 'bg-gradient-to-r from-destructive/20 to-accent/20 text-destructive border-destructive/30'
-  };
-  return colors[category];
+  // Single consistent brown color for all categories
+  return 'bg-amber-700 text-white border-amber-800';
 };
 
 export const isEventPast = (date: string): boolean => {
