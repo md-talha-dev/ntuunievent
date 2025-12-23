@@ -17,6 +17,7 @@ export interface Event {
   category: EventCategory;
   location: string;
   organizer: string;
+  department?: string;
   image?: string;
   interestedCount: number;
   goingCount: number;
@@ -33,28 +34,47 @@ export type EventCategory =
   | 'Cultural'
   | 'Technical'
   | 'Career'
-  | 'Social';
+  | 'Social'
+  | 'Academic'
+  | 'Competition';
 
-export const CATEGORIES: EventCategory[] = [
+export const INITIAL_CATEGORIES: EventCategory[] = [
   'Workshop',
   'Seminar',
   'Sports',
   'Cultural',
   'Technical',
   'Career',
-  'Social'
+  'Social',
+  'Academic',
+  'Competition'
 ];
 
-export const ORGANIZERS = [
-  'Sports Department',
-  'Coding Club',
-  'Cultural Society',
-  'Career Services',
-  'IEEE NTU',
+export const INITIAL_DEPARTMENTS = [
+  'Department of Computer Science',
+  'Department of Textile Engineering',
+  'FSD Business School',
+  'Department of Fashion Design',
+  'Department of Electrical Engineering',
+  'Department of Mechanical Engineering',
+  'Department of Civil Engineering',
+  'Department of Applied Sciences'
+];
+
+export const INITIAL_ORGANIZERS = [
+  'AI Society',
+  'Software Engineering Society',
+  'Computer Science Society',
+  'DCS Sports Society',
+  'IEEE NTU Student Branch',
   'ACM Student Chapter',
   'Literary Society',
-  'Textile Engineering Department',
-  'Computer Science Department'
+  'Dramatics Society',
+  'Music Society',
+  'Photography Society',
+  'E-Sports Society',
+  'Career Services',
+  'Cultural Society'
 ];
 
 // Mock Users
@@ -106,7 +126,8 @@ export const INITIAL_EVENTS: Event[] = [
     time: '10:00 AM',
     category: 'Workshop',
     location: 'Computer Lab 1, CS Building',
-    organizer: 'Coding Club',
+    organizer: 'Software Engineering Society',
+    department: 'Department of Computer Science',
     interestedCount: 45,
     goingCount: 28,
     interestedUsers: ['1', '2'],
@@ -122,7 +143,8 @@ export const INITIAL_EVENTS: Event[] = [
     time: '9:00 AM',
     category: 'Sports',
     location: 'NTU Sports Complex',
-    organizer: 'Sports Department',
+    organizer: 'DCS Sports Society',
+    department: 'Department of Computer Science',
     interestedCount: 120,
     goingCount: 85,
     interestedUsers: ['1', '3', '4'],
@@ -138,7 +160,8 @@ export const INITIAL_EVENTS: Event[] = [
     time: '2:00 PM',
     category: 'Seminar',
     location: 'Auditorium Hall',
-    organizer: 'IEEE NTU',
+    organizer: 'AI Society',
+    department: 'Department of Computer Science',
     interestedCount: 78,
     goingCount: 52,
     interestedUsers: ['2', '4'],
@@ -155,6 +178,7 @@ export const INITIAL_EVENTS: Event[] = [
     category: 'Cultural',
     location: 'Open Air Theatre',
     organizer: 'Cultural Society',
+    department: 'FSD Business School',
     interestedCount: 200,
     goingCount: 150,
     interestedUsers: ['1', '2', '3', '4'],
@@ -171,6 +195,7 @@ export const INITIAL_EVENTS: Event[] = [
     category: 'Career',
     location: 'Main Campus Ground',
     organizer: 'Career Services',
+    department: 'FSD Business School',
     interestedCount: 300,
     goingCount: 220,
     interestedUsers: [],
@@ -184,9 +209,10 @@ export const INITIAL_EVENTS: Event[] = [
     description: '24-hour coding competition. Build innovative solutions and win exciting prizes!',
     date: '2024-12-01',
     time: '8:00 AM',
-    category: 'Technical',
+    category: 'Competition',
     location: 'CS Building',
     organizer: 'ACM Student Chapter',
+    department: 'Department of Computer Science',
     interestedCount: 150,
     goingCount: 100,
     interestedUsers: ['1', '2'],
@@ -198,13 +224,15 @@ export const INITIAL_EVENTS: Event[] = [
 
 export const getCategoryColor = (category: EventCategory): string => {
   const colors: Record<EventCategory, string> = {
-    Workshop: 'bg-info/10 text-info',
-    Seminar: 'bg-primary/10 text-primary',
-    Sports: 'bg-success/10 text-success',
-    Cultural: 'bg-accent/20 text-accent-foreground',
-    Technical: 'bg-secondary text-secondary-foreground',
-    Career: 'bg-warning/10 text-warning-foreground',
-    Social: 'bg-muted text-muted-foreground'
+    Workshop: 'bg-gradient-to-r from-info/20 to-info/10 text-info-foreground border-info/30',
+    Seminar: 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/30',
+    Sports: 'bg-gradient-to-r from-success/20 to-success/10 text-success-foreground border-success/30',
+    Cultural: 'bg-gradient-to-r from-accent/20 to-accent/10 text-accent-foreground border-accent/30',
+    Technical: 'bg-gradient-to-r from-secondary/20 to-secondary/10 text-secondary-foreground border-secondary/30',
+    Career: 'bg-gradient-to-r from-warning/20 to-warning/10 text-warning-foreground border-warning/30',
+    Social: 'bg-gradient-to-r from-muted to-muted/70 text-muted-foreground border-muted-foreground/30',
+    Academic: 'bg-gradient-to-r from-primary/15 to-info/15 text-primary border-primary/20',
+    Competition: 'bg-gradient-to-r from-destructive/20 to-accent/20 text-destructive border-destructive/30'
   };
   return colors[category];
 };

@@ -112,6 +112,22 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "rotate-3d": {
+          "0%": { transform: "perspective(1000px) rotateY(0deg)" },
+          "100%": { transform: "perspective(1000px) rotateY(360deg)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 20px hsl(0 100% 23% / 0.2), 0 0 40px hsl(0 100% 23% / 0.1)" },
+          "50%": { boxShadow: "0 0 30px hsl(0 100% 23% / 0.4), 0 0 60px hsl(0 100% 23% / 0.2)" },
+        },
+        "slide-down": {
+          "0%": { transform: "translateY(-10px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "wiggle": {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -127,6 +143,18 @@ export default {
         "shimmer": "shimmer 2s linear infinite",
         "float": "float 3s ease-in-out infinite",
         "enter": "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
+        "rotate-3d": "rotate-3d 8s linear infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "slide-down": "slide-down 0.3s ease-out",
+        "wiggle": "wiggle 0.5s ease-in-out",
+      },
+      boxShadow: {
+        "3d": "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -5px rgba(0, 0, 0, 0.1), 0 20px 40px -15px hsl(0 100% 23% / 0.15)",
+        "3d-hover": "0 20px 40px -5px rgba(0, 0, 0, 0.2), 0 8px 20px -5px rgba(0, 0, 0, 0.15), 0 30px 50px -20px hsl(0 100% 23% / 0.25)",
+        "3d-lg": "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15), 0 40px 60px -25px hsl(0 100% 23% / 0.3)",
+        "glow": "0 0 20px hsl(0 100% 23% / 0.2), 0 0 40px hsl(0 100% 23% / 0.1)",
+        "glow-lg": "0 0 30px hsl(0 100% 23% / 0.3), 0 0 60px hsl(0 100% 23% / 0.2)",
+        "inner-glow": "inset 0 0 20px hsl(0 100% 23% / 0.1)",
       },
     },
   },
