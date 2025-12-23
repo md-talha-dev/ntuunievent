@@ -55,9 +55,6 @@ export const INITIAL_DEPARTMENTS = [
   'Department of Textile Engineering',
   'FSD Business School',
   'Department of Fashion Design',
-  'Department of Electrical Engineering',
-  'Department of Mechanical Engineering',
-  'Department of Civil Engineering',
   'Department of Applied Sciences'
 ];
 
@@ -66,8 +63,6 @@ export const INITIAL_ORGANIZERS = [
   'Software Engineering Society',
   'Computer Science Society',
   'DCS Sports Society',
-  'IEEE NTU Student Branch',
-  'ACM Student Chapter',
   'Literary Society',
   'Dramatics Society',
   'Music Society',
