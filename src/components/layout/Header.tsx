@@ -33,15 +33,15 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-primary/20 bg-primary text-primary-foreground">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
           <img src={ntuLogo} alt="NTU Logo" className="h-12 w-auto" />
           <div>
-            <h1 className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+            <h1 className="font-display text-xl font-bold text-primary-foreground group-hover:text-primary-foreground/80 transition-colors">
               UniEvent
             </h1>
-            <p className="text-xs text-muted-foreground">NTU Campus Events</p>
+            <p className="text-xs text-primary-foreground/70">NTU Campus Events</p>
           </div>
         </Link>
 
@@ -50,14 +50,14 @@ const Header: React.FC = () => {
             <>
               {user.role === 'admin' && (
                 <Link to="/admin">
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                     <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </Button>
                 </Link>
               )}
               <Link to="/events">
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-2 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                   <Calendar className="h-4 w-4" />
                   Events
                 </Button>
@@ -65,9 +65,9 @@ const Header: React.FC = () => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10 border-2 border-primary/20">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary-foreground/10">
+                    <Avatar className="h-10 w-10 border-2 border-primary-foreground/30">
+                      <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-semibold">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
