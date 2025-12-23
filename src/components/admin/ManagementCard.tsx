@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ interface ManagementCardProps {
   placeholder: string;
 }
 
-const ManagementCard: React.FC<ManagementCardProps> = ({
+const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
   title,
   description,
   items,
@@ -26,7 +26,7 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
   icon,
   gradient,
   placeholder
-}) => {
+}, ref) => {
   const [newItem, setNewItem] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
@@ -40,6 +40,7 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleAdd();
     } else if (e.key === 'Escape') {
       setIsAdding(false);
@@ -48,14 +49,18 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
   };
 
   return (
-    <Card className={cn(
-      "group relative overflow-hidden transition-all duration-500",
-      "hover:shadow-2xl hover:-translate-y-1",
-      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
-      "hover:before:opacity-100"
-    )}>
+    <Card 
+      ref={ref}
+      className={cn(
+        "group relative overflow-hidden transition-all duration-500",
+        "hover:shadow-2xl hover:-translate-y-1",
+        "shadow-3d hover:shadow-3d-lg",
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+        "hover:before:opacity-100"
+      )}
+    >
       {/* Decorative gradient bar */}
-      <div className={cn("absolute top-0 left-0 right-0 h-1.5 rounded-t-xl", gradient)} />
+      <div className={cn("absolute top-0 left-0 right-0 h-1.5 rounded-t-xl shadow-lg", gradient)} />
       
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
@@ -63,16 +68,19 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
             <div className={cn(
               "p-2.5 rounded-xl shadow-lg transition-all duration-300",
               "group-hover:scale-110 group-hover:shadow-xl",
+              "shadow-primary/20",
               gradient
             )}>
               {icon}
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">{title}</h3>
+              <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                {title}
+              </h3>
               <p className="text-xs text-muted-foreground font-normal">{description}</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-gradient-to-r from-muted to-muted/50 shadow-sm">
+          <Badge variant="secondary" className="bg-gradient-to-r from-muted to-muted/50 shadow-md text-foreground font-bold">
             {items.length}
           </Badge>
         </CardTitle>
@@ -87,9 +95,9 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
               className={cn(
                 "group/item flex items-center justify-between px-3 py-2.5 rounded-lg",
                 "bg-gradient-to-r from-muted/50 to-muted/30",
-                "border border-border/30 shadow-sm",
+                "border border-border/30 shadow-md",
                 "transition-all duration-300",
-                "hover:shadow-md hover:border-border/50 hover:from-muted/70 hover:to-muted/40",
+                "hover:shadow-lg hover:border-border/50 hover:from-muted/70 hover:to-muted/40",
                 "animate-fade-in"
               )}
               style={{ animationDelay: `${index * 50}ms` }}
@@ -119,14 +127,15 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
               onChange={(e) => setNewItem(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className="flex-1 h-9 text-sm"
+              className="flex-1 h-9 text-sm shadow-md"
               autoFocus
             />
             <Button
               size="sm"
               variant="hero"
               onClick={handleAdd}
-              className="h-9 px-3 shadow-lg"
+              disabled={!newItem.trim()}
+              className="h-9 px-3 shadow-lg hover:shadow-xl"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -137,7 +146,7 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
                 setIsAdding(false);
                 setNewItem('');
               }}
-              className="h-9 w-9 p-0"
+              className="h-9 w-9 p-0 shadow-md"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -150,16 +159,18 @@ const ManagementCard: React.FC<ManagementCardProps> = ({
               "w-full h-10 border-dashed border-2",
               "bg-gradient-to-r from-muted/30 to-transparent",
               "hover:from-primary/10 hover:to-primary/5 hover:border-primary/50",
-              "transition-all duration-300 group/add"
+              "transition-all duration-300 group/add shadow-md hover:shadow-lg"
             )}
           >
             <Plus className="h-4 w-4 mr-2 group-hover/add:rotate-90 transition-transform duration-300" />
-            Add New {title.slice(0, -1)}
+            Add New {title.slice(0, -1) === 'Categorie' ? 'Category' : title.slice(0, -1) === 'Societie' ? 'Society' : title.slice(0, -1)}
           </Button>
         )}
       </CardContent>
     </Card>
   );
-};
+});
+
+ManagementCard.displayName = 'ManagementCard';
 
 export default ManagementCard;
