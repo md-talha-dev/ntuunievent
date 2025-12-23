@@ -374,7 +374,7 @@ npm run dev
 
 | Version | Date | Changes         |
 | ------- | ---- | --------------- |
-| 1.0.0   | 2024 | Initial release |
+| 1.0.0   | 2025 | Initial release |
 
 ---
 
