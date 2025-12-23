@@ -168,17 +168,20 @@ const Index: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-border">
+      <footer className="py-8 border-t border-border bg-gradient-hero">
         <div className="container">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
                 <Calendar className="h-4 w-4 text-primary-foreground" />
               </div>
               <span className="font-display font-semibold text-foreground">UniEvent</span>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2025 UniEvent - National Textile University. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground/70 mt-2">
+              VibeCoded/Developed by Talha AR
             </p>
           </div>
         </div>
