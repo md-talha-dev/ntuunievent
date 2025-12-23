@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ interface ManagementCardProps {
   placeholder: string;
 }
 
-const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
+const ManagementCard: React.FC<ManagementCardProps> = ({
   title,
   description,
   items,
@@ -26,7 +26,7 @@ const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
   icon,
   gradient,
   placeholder
-}, ref) => {
+}) => {
   const [newItem, setNewItem] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
@@ -48,13 +48,18 @@ const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
     }
   };
 
+  const getSingularTitle = () => {
+    if (title === 'Categories') return 'Category';
+    if (title === 'Societies') return 'Society';
+    return title.slice(0, -1);
+  };
+
   return (
     <Card 
-      ref={ref}
       className={cn(
         "group relative overflow-hidden transition-all duration-500",
         "hover:shadow-2xl hover:-translate-y-1",
-        "shadow-3d hover:shadow-3d-lg",
+        "shadow-lg hover:shadow-xl",
         "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
         "hover:before:opacity-100"
       )}
@@ -68,7 +73,6 @@ const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
             <div className={cn(
               "p-2.5 rounded-xl shadow-lg transition-all duration-300",
               "group-hover:scale-110 group-hover:shadow-xl",
-              "shadow-primary/20",
               gradient
             )}>
               {icon}
@@ -163,14 +167,12 @@ const ManagementCard = forwardRef<HTMLDivElement, ManagementCardProps>(({
             )}
           >
             <Plus className="h-4 w-4 mr-2 group-hover/add:rotate-90 transition-transform duration-300" />
-            Add New {title.slice(0, -1) === 'Categorie' ? 'Category' : title.slice(0, -1) === 'Societie' ? 'Society' : title.slice(0, -1)}
+            Add New {getSingularTitle()}
           </Button>
         )}
       </CardContent>
     </Card>
   );
-});
-
-ManagementCard.displayName = 'ManagementCard';
+};
 
 export default ManagementCard;
