@@ -97,7 +97,18 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
       </CardHeader>
       
       <CardContent className="pb-3">
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+        {/* Event Image */}
+        {event.image && (
+          <div className="rounded-lg overflow-hidden mb-4 -mx-2">
+            <img 
+              src={event.image} 
+              alt={event.title} 
+              className="w-full h-32 object-cover"
+            />
+          </div>
+        )}
+        
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 whitespace-pre-wrap">
           {event.description}
         </p>
         

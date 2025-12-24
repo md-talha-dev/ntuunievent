@@ -93,7 +93,18 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, open, onClose }) => 
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
-          <p className="text-muted-foreground leading-relaxed">
+          {/* Event Image */}
+          {event.image && (
+            <div className="rounded-lg overflow-hidden border border-border">
+              <img 
+                src={event.image} 
+                alt={event.title} 
+                className="w-full h-56 object-cover"
+              />
+            </div>
+          )}
+
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {event.description}
           </p>
 

@@ -77,7 +77,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           image: e.image || undefined,
           interestedCount: e.interested_count,
           goingCount: e.going_count,
-          status: e.status as 'active' | 'closed',
+          status: e.status as 'active' | 'upcoming' | 'closed',
           createdAt: e.created_at,
           userInterested: participation?.status === 'interested',
           userGoing: participation?.status === 'going'
@@ -176,7 +176,7 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         image: data.image || undefined,
         interestedCount: data.interested_count,
         goingCount: data.going_count,
-        status: data.status as 'active' | 'closed',
+        status: data.status as 'active' | 'upcoming' | 'closed',
         createdAt: data.created_at,
         userInterested: false,
         userGoing: false
