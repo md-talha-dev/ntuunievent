@@ -13,7 +13,7 @@ export interface Event {
   image?: string;
   interestedCount: number;
   goingCount: number;
-  status: 'active' | 'closed';
+  status: 'active' | 'upcoming' | 'closed';
   createdAt: string;
   // User's own participation status (only visible to authenticated user)
   userInterested?: boolean;

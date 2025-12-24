@@ -75,12 +75,18 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) => {
     >
       <CardHeader className="pb-3 bg-gradient-to-r from-transparent via-primary/5 to-transparent">
         <div className="flex items-start justify-between gap-2">
-          <div className="space-y-1">
+          <div className="space-y-1 flex flex-wrap gap-1">
             <Badge className={cn("font-medium transition-transform hover:scale-105", getCategoryColor(event.category))}>
               {event.category}
             </Badge>
+            {event.status === 'upcoming' && (
+              <Badge className="bg-blue-500 text-white border-blue-600">Upcoming</Badge>
+            )}
+            {event.status === 'active' && (
+              <Badge className="bg-green-500 text-white border-green-600">Live Now</Badge>
+            )}
             {isPast && (
-              <Badge variant="secondary" className="ml-2">Past Event</Badge>
+              <Badge variant="secondary">Past Event</Badge>
             )}
           </div>
           <span className="text-xs text-muted-foreground">{event.organizer}</span>

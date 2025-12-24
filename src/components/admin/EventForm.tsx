@@ -2,11 +2,18 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { format } from 'date-fns';
 import { Event } from '@/lib/data';
 import { useEvents } from '@/contexts/EventContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Form,
   FormControl,
@@ -28,7 +35,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar, Clock, MapPin, Tag, Building2, Users2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, MapPin, Tag, Building2, Users2, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const eventSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
@@ -39,7 +47,7 @@ const eventSchema = z.object({
   location: z.string().min(1, 'Location is required').max(200, 'Location must be less than 200 characters'),
   organizer: z.string().min(1, 'Organizer is required'),
   department: z.string().optional(),
-  status: z.enum(['active', 'closed']),
+  status: z.enum(['active', 'upcoming', 'closed']),
 });
 
 type EventFormData = z.infer<typeof eventSchema>;
@@ -66,7 +74,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
       location: event?.location || '',
       organizer: event?.organizer || '',
       department: event?.department || '',
-      status: event?.status || 'active',
+      status: event?.status || 'upcoming',
     },
   });
 
@@ -93,7 +101,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
         location: '',
         organizer: '',
         department: '',
-        status: 'active',
+        status: 'upcoming',
       });
     }
   }, [event, form]);
@@ -110,7 +118,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
         <DialogHeader>
           <DialogTitle className="font-display text-xl font-bold flex items-center gap-3">
             <div className="p-2 rounded-lg bg-gradient-primary shadow-lg">
-              <Calendar className="h-5 w-5 text-primary-foreground" />
+              <CalendarIcon className="h-5 w-5 text-primary-foreground" />
             </div>
             {isEditing ? 'Edit Event' : 'Create New Event'}
           </DialogTitle>
@@ -124,7 +132,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-primary" />
+                    <Tag className="h-4 w-4 icon-3d-sm" />
                     Event Title
                   </FormLabel>
                   <FormControl>
@@ -158,14 +166,44 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-primary" />
-                      Date
+                      <CalendarIcon className="h-4 w-4 icon-3d-sm" />
+                      Event Date
                     </FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(new Date(field.value), "PPP")
+                            ) : (
+                              <span>Pick event date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              field.onChange(format(date, 'yyyy-MM-dd'));
+                            }
+                          }}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -177,11 +215,11 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-primary" />
+                      <Clock className="h-4 w-4 icon-3d-sm" />
                       Time
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 10:00 AM" {...field} />
+                      <Input placeholder="e.g., 10:00 AM - 2:00 PM" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,7 +234,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-primary" />
+                      <Tag className="h-4 w-4 icon-3d-sm" />
                       Category
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
@@ -224,7 +262,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Users2 className="h-4 w-4 text-primary" />
+                      <Users2 className="h-4 w-4 icon-3d-sm" />
                       Organizer/Society
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
@@ -253,7 +291,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-primary" />
+                    <Building2 className="h-4 w-4 icon-3d-sm" />
                     Department (Optional)
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -281,7 +319,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" />
+                    <MapPin className="h-4 w-4 icon-3d-sm" />
                     Location
                   </FormLabel>
                   <FormControl>
@@ -297,7 +335,10 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 icon-3d-sm" />
+                    Event Status
+                  </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -305,8 +346,24 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
+                      <SelectItem value="upcoming">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-blue-500"></span>
+                          Upcoming
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="active">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                          Active (Happening Now)
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="closed">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-gray-500"></span>
+                          Closed
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
