@@ -269,11 +269,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           throw deleteError;
         }
 
-        // Update count
-        const { error: updateError } = await supabase
-          .from('events')
-          .update({ interested_count: Math.max(0, event.interestedCount - 1) })
-          .eq('id', eventId);
+        // Update count using RPC function
+        const { error: updateError } = await supabase.rpc('update_event_counts', {
+          _event_id: eventId,
+          _interested_delta: -1,
+          _going_delta: 0
+        });
 
         if (updateError) {
           console.error('Update count error:', updateError);
@@ -299,14 +300,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             throw updateError;
           }
 
-          // Update counts
-          await supabase
-            .from('events')
-            .update({ 
-              interested_count: event.interestedCount + 1,
-              going_count: Math.max(0, event.goingCount - 1)
-            })
-            .eq('id', eventId);
+          // Update counts using RPC function
+          await supabase.rpc('update_event_counts', {
+            _event_id: eventId,
+            _interested_delta: 1,
+            _going_delta: -1
+          });
 
           setEvents(prev => prev.map(e => 
             e.id === eventId 
@@ -331,11 +330,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             throw insertError;
           }
 
-          // Update count
-          await supabase
-            .from('events')
-            .update({ interested_count: event.interestedCount + 1 })
-            .eq('id', eventId);
+          // Update count using RPC function
+          await supabase.rpc('update_event_counts', {
+            _event_id: eventId,
+            _interested_delta: 1,
+            _going_delta: 0
+          });
 
           setEvents(prev => prev.map(e => 
             e.id === eventId 
@@ -377,11 +377,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           throw deleteError;
         }
 
-        // Update count
-        await supabase
-          .from('events')
-          .update({ going_count: Math.max(0, event.goingCount - 1) })
-          .eq('id', eventId);
+        // Update count using RPC function
+        await supabase.rpc('update_event_counts', {
+          _event_id: eventId,
+          _interested_delta: 0,
+          _going_delta: -1
+        });
 
         setEvents(prev => prev.map(e => 
           e.id === eventId 
@@ -403,14 +404,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             throw updateError;
           }
 
-          // Update counts
-          await supabase
-            .from('events')
-            .update({ 
-              going_count: event.goingCount + 1,
-              interested_count: Math.max(0, event.interestedCount - 1)
-            })
-            .eq('id', eventId);
+          // Update counts using RPC function
+          await supabase.rpc('update_event_counts', {
+            _event_id: eventId,
+            _interested_delta: -1,
+            _going_delta: 1
+          });
 
           setEvents(prev => prev.map(e => 
             e.id === eventId 
@@ -435,11 +434,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             throw insertError;
           }
 
-          // Update count
-          await supabase
-            .from('events')
-            .update({ going_count: event.goingCount + 1 })
-            .eq('id', eventId);
+          // Update count using RPC function
+          await supabase.rpc('update_event_counts', {
+            _event_id: eventId,
+            _interested_delta: 0,
+            _going_delta: 1
+          });
 
           setEvents(prev => prev.map(e => 
             e.id === eventId 
