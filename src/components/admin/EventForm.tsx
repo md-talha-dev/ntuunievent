@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
 import { Event } from '@/lib/data';
 import { useEvents } from '@/contexts/EventContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
   Select,
@@ -35,12 +37,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar as CalendarIcon, Clock, MapPin, Tag, Building2, Users2, Zap } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, MapPin, Tag, Building2, Users2, Zap, ImagePlus, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const eventSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  description: z.string().min(1, 'Description is required').max(1000, 'Description must be less than 1000 characters'),
+  description: z.string().min(1, 'Description is required').max(2000, 'Description must be less than 2000 characters'),
   date: z.string().min(1, 'Date is required'),
   time: z.string().min(1, 'Time is required'),
   category: z.string().min(1, 'Category is required'),
@@ -48,6 +51,7 @@ const eventSchema = z.object({
   organizer: z.string().min(1, 'Organizer is required'),
   department: z.string().optional(),
   status: z.enum(['active', 'upcoming', 'closed']),
+  image: z.string().optional(),
 });
 
 type EventFormData = z.infer<typeof eventSchema>;
@@ -62,6 +66,8 @@ interface EventFormProps {
 const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit }) => {
   const { categories, departments, organizers } = useEvents();
   const isEditing = !!event;
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(event?.image || null);
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
@@ -75,6 +81,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
       organizer: event?.organizer || '',
       department: event?.department || '',
       status: event?.status || 'upcoming',
+      image: event?.image || '',
     },
   });
 
@@ -90,7 +97,9 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
         organizer: event.organizer,
         department: event.department || '',
         status: event.status,
+        image: event.image || '',
       });
+      setImagePreview(event.image || null);
     } else {
       form.reset({
         title: '',
@@ -102,13 +111,64 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
         organizer: '',
         department: '',
         status: 'upcoming',
+        image: '',
       });
+      setImagePreview(null);
     }
   }, [event, form]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `events/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('event-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('event-images')
+        .getPublicUrl(filePath);
+
+      form.setValue('image', publicUrl);
+      setImagePreview(publicUrl);
+      toast.success('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = () => {
+    form.setValue('image', '');
+    setImagePreview(null);
+  };
 
   const handleSubmit = (data: EventFormData) => {
     onSubmit(data);
     form.reset();
+    setImagePreview(null);
     onClose();
   };
 
@@ -151,15 +211,75 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Enter event description" 
-                      className="min-h-[100px]"
+                      placeholder="Enter event description (line breaks and formatting will be preserved)" 
+                      className="min-h-[120px] font-mono text-sm"
                       {...field} 
                     />
                   </FormControl>
+                  <FormDescription>
+                    Line breaks and spaces will be shown exactly as you type them.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Image Upload */}
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <ImagePlus className="h-4 w-4 icon-3d-sm" />
+                Event Image (Optional)
+              </FormLabel>
+              <div className="space-y-3">
+                {imagePreview ? (
+                  <div className="relative rounded-lg overflow-hidden border border-border">
+                    <img 
+                      src={imagePreview} 
+                      alt="Event preview" 
+                      className="w-full h-48 object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={removeImage}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className={cn(
+                    "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer",
+                    "border-border hover:border-primary/50 bg-muted/30 hover:bg-muted/50 transition-colors",
+                    uploading && "opacity-50 cursor-not-allowed"
+                  )}>
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      {uploading ? (
+                        <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                      ) : (
+                        <>
+                          <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">
+                            Click to upload event image
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            PNG, JPG up to 5MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                  </label>
+                )}
+              </div>
+            </FormItem>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
@@ -375,7 +495,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, open, onClose, onSubmit })
               <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" variant="hero" className="flex-1 shadow-xl shadow-primary/20">
+              <Button type="submit" variant="hero" className="flex-1 shadow-xl shadow-primary/20" disabled={uploading}>
                 {isEditing ? 'Update Event' : 'Create Event'}
               </Button>
             </div>
