@@ -1,4 +1,5 @@
 import React from 'react';
+import { format } from 'date-fns';
 import { EventCategory } from '@/lib/data';
 import { useEvents } from '@/contexts/EventContext';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, X, Filter, Sparkles } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Search, X, Filter, Sparkles, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventFiltersProps {
@@ -22,6 +29,10 @@ interface EventFiltersProps {
   setOrganizerFilter: (organizer: string) => void;
   showPastEvents: boolean;
   setShowPastEvents: (show: boolean) => void;
+  fromDate: Date | undefined;
+  setFromDate: (date: Date | undefined) => void;
+  toDate: Date | undefined;
+  setToDate: (date: Date | undefined) => void;
 }
 
 const EventFilters: React.FC<EventFiltersProps> = ({
@@ -33,15 +44,21 @@ const EventFilters: React.FC<EventFiltersProps> = ({
   setOrganizerFilter,
   showPastEvents,
   setShowPastEvents,
+  fromDate,
+  setFromDate,
+  toDate,
+  setToDate,
 }) => {
   const { categories, organizers } = useEvents();
-  const hasActiveFilters = searchQuery || categoryFilter !== 'all' || organizerFilter !== 'all' || showPastEvents;
+  const hasActiveFilters = searchQuery || categoryFilter !== 'all' || organizerFilter !== 'all' || showPastEvents || fromDate || toDate;
 
   const clearFilters = () => {
     setSearchQuery('');
     setCategoryFilter('all');
     setOrganizerFilter('all');
     setShowPastEvents(false);
+    setFromDate(undefined);
+    setToDate(undefined);
   };
 
   return (
@@ -84,7 +101,7 @@ const EventFilters: React.FC<EventFiltersProps> = ({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value as EventCategory | 'all')}>
           <SelectTrigger className="shadow-sm hover:shadow-md transition-shadow duration-300">
             <SelectValue placeholder="Category" />
@@ -113,11 +130,64 @@ const EventFilters: React.FC<EventFiltersProps> = ({
           </SelectContent>
         </Select>
 
+        {/* From Date Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal shadow-sm hover:shadow-md transition-shadow duration-300",
+                !fromDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4 icon-3d-sm" />
+              {fromDate ? format(fromDate, "PP") : <span>From Date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={fromDate}
+              onSelect={setFromDate}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
+
+        {/* To Date Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal shadow-sm hover:shadow-md transition-shadow duration-300",
+                !toDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4 icon-3d-sm" />
+              {toDate ? format(toDate, "PP") : <span>To Date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={toDate}
+              onSelect={setToDate}
+              disabled={(date) => fromDate ? date < fromDate : false}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex justify-start">
         <Button
           variant={showPastEvents ? "secondary" : "outline"}
           onClick={() => setShowPastEvents(!showPastEvents)}
           className={cn(
-            "w-full shadow-sm hover:shadow-md transition-all duration-300",
+            "shadow-sm hover:shadow-md transition-all duration-300",
             showPastEvents && "bg-gradient-to-r from-secondary to-secondary/80"
           )}
         >

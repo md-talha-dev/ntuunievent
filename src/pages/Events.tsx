@@ -19,6 +19,8 @@ const Events: React.FC = () => {
   const [organizerFilter, setOrganizerFilter] = useState('all');
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -38,12 +40,17 @@ const Events: React.FC = () => {
       const isPast = isEventPast(event.date);
       const matchesPastFilter = showPastEvents ? isPast : !isPast;
 
-      return matchesSearch && matchesCategory && matchesOrganizer && matchesPastFilter;
+      // Date range filter
+      const eventDate = new Date(event.date);
+      const matchesFromDate = !fromDate || eventDate >= fromDate;
+      const matchesToDate = !toDate || eventDate <= toDate;
+
+      return matchesSearch && matchesCategory && matchesOrganizer && matchesPastFilter && matchesFromDate && matchesToDate;
     }).sort((a, b) => {
       // Sort by date, upcoming first
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     });
-  }, [events, searchQuery, categoryFilter, organizerFilter, showPastEvents]);
+  }, [events, searchQuery, categoryFilter, organizerFilter, showPastEvents, fromDate, toDate]);
 
   if (isLoading) {
     return (
@@ -77,6 +84,10 @@ const Events: React.FC = () => {
             setOrganizerFilter={setOrganizerFilter}
             showPastEvents={showPastEvents}
             setShowPastEvents={setShowPastEvents}
+            fromDate={fromDate}
+            setFromDate={setFromDate}
+            toDate={toDate}
+            setToDate={setToDate}
           />
         </div>
 
