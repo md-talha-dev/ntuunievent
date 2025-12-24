@@ -256,33 +256,48 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       const isCurrentlyInterested = event.userInterested;
       const wasGoing = event.userGoing;
 
-      if (isCurrentlyInterested) {
+        if (isCurrentlyInterested) {
         // Remove interest
-        await supabase
+        const { error: deleteError } = await supabase
           .from('event_participants')
           .delete()
           .eq('event_id', eventId)
           .eq('user_id', user.id);
 
+        if (deleteError) {
+          console.error('Delete error:', deleteError);
+          throw deleteError;
+        }
+
         // Update count
-        await supabase
+        const { error: updateError } = await supabase
           .from('events')
           .update({ interested_count: Math.max(0, event.interestedCount - 1) })
           .eq('id', eventId);
+
+        if (updateError) {
+          console.error('Update count error:', updateError);
+        }
 
         setEvents(prev => prev.map(e => 
           e.id === eventId 
             ? { ...e, userInterested: false, interestedCount: Math.max(0, e.interestedCount - 1) }
             : e
         ));
+        toast.success('Interest removed!');
       } else {
         // If was going, update to interested
         if (wasGoing) {
-          await supabase
+          const { error: updateError } = await supabase
             .from('event_participants')
             .update({ status: 'interested' })
             .eq('event_id', eventId)
             .eq('user_id', user.id);
+
+          if (updateError) {
+            console.error('Update participation error:', updateError);
+            throw updateError;
+          }
 
           // Update counts
           await supabase
@@ -304,11 +319,17 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 }
               : e
           ));
+          toast.success('Marked as interested!');
         } else {
           // Add new interest
-          await supabase
+          const { error: insertError } = await supabase
             .from('event_participants')
             .insert({ event_id: eventId, user_id: user.id, status: 'interested' });
+
+          if (insertError) {
+            console.error('Insert error:', insertError);
+            throw insertError;
+          }
 
           // Update count
           await supabase
@@ -321,11 +342,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               ? { ...e, userInterested: true, interestedCount: e.interestedCount + 1 }
               : e
           ));
+          toast.success('Marked as interested!');
         }
       }
     } catch (error) {
       console.error('Error toggling interested:', error);
-      toast.error('Failed to update interest');
+      toast.error('Failed to update interest. Please try again.');
     }
   };
 
@@ -344,11 +366,16 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
       if (isCurrentlyGoing) {
         // Remove going
-        await supabase
+        const { error: deleteError } = await supabase
           .from('event_participants')
           .delete()
           .eq('event_id', eventId)
           .eq('user_id', user.id);
+
+        if (deleteError) {
+          console.error('Delete error:', deleteError);
+          throw deleteError;
+        }
 
         // Update count
         await supabase
@@ -361,14 +388,20 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             ? { ...e, userGoing: false, goingCount: Math.max(0, e.goingCount - 1) }
             : e
         ));
+        toast.success('Attendance removed!');
       } else {
         // If was interested, update to going
         if (wasInterested) {
-          await supabase
+          const { error: updateError } = await supabase
             .from('event_participants')
             .update({ status: 'going' })
             .eq('event_id', eventId)
             .eq('user_id', user.id);
+
+          if (updateError) {
+            console.error('Update participation error:', updateError);
+            throw updateError;
+          }
 
           // Update counts
           await supabase
@@ -390,11 +423,17 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 }
               : e
           ));
+          toast.success('Marked as going!');
         } else {
           // Add new going
-          await supabase
+          const { error: insertError } = await supabase
             .from('event_participants')
             .insert({ event_id: eventId, user_id: user.id, status: 'going' });
+
+          if (insertError) {
+            console.error('Insert error:', insertError);
+            throw insertError;
+          }
 
           // Update count
           await supabase
@@ -407,11 +446,12 @@ export const EventProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               ? { ...e, userGoing: true, goingCount: e.goingCount + 1 }
               : e
           ));
+          toast.success('Marked as going!');
         }
       }
     } catch (error) {
       console.error('Error toggling going:', error);
-      toast.error('Failed to update attendance');
+      toast.error('Failed to update attendance. Please try again.');
     }
   };
 
