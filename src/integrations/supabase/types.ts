@@ -214,6 +214,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_event_counts: {
+        Args: {
+          _event_id: string
+          _going_delta?: number
+          _interested_delta?: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "student"
